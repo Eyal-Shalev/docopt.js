@@ -1,0 +1,9 @@
+language: minimal
+services:
+  - docker
+install:
+  - docker build -t nodejs-test -f test/nodejs.Dockerfile .
+  - docker pull python:2-buster
+script:
+  - docker run -v "$(pwd):/docopt.js" -w /docopt.js python:2-buster test/docker_run.sh
+  - docker run -v nodejs-test NODE_OPTIONS='--no-warnings --experimental-modules' node test/nodejs_docopt_test.js
