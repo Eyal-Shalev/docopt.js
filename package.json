@@ -1,0 +1,33 @@
+{
+  "name": "docopt",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "command line option parser, that will make you smile",
+  "main": "src/docopt.mjs",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^13.7.1"
+  },
+  "scripts": {
+    "test": "node test/test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eyal-Shalev/docopt.js.git"
+  },
+  "keywords": [
+    "docopt",
+    "cli",
+    "options"
+  ],
+  "author": "Eyal Shalev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Eyal-Shalev/docopt.js/issues"
+  },
+  "homepage": "https://github.com/Eyal-Shalev/docopt.js#readme"
+}
