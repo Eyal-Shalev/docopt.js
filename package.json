@@ -10,8 +10,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^13.7.1"
+    "@types/node": "^12.16.0"
   },
+  "engines" : { "node" : ">=12.16.0" },
   "scripts": {
     "test": "node test/test.mjs"
   },

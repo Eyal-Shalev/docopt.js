@@ -1,13 +1,12 @@
 `docopt.js` – command line option parser, that will make you smile
 ===============================================================================
+[![Build Status](https://travis-ci.org/Eyal-Shalev/docopt.js.svg?branch=master)](https://travis-ci.org/Eyal-Shalev/docopt.js)
+[![docopt.js v1.0.0](https://img.shields.io/badge/docopt.js-1.0.0-blueviolet)](https://github.com/Eyal-Shalev/docopt.js)
+[![node >= 12.16.0](https://img.shields.io/badge/node-%3E%3D%2012.16.0-brightgreen)](https://nodejs.org/)
+[![deno >= 0.33.0](https://img.shields.io/badge/deno-%3E%3D0.33.0-black)](https://deno.land/)
 
 This is the javascript port of [`docopt`](https://github.com/docopt/docopt),
 the awesome option parser written originally in python.
-
-> New in version 0.5.0:
->
-> Repeatable flags and commands are counted if repeated (a-la ssh `-vvv`).
-> Repeatable options with arguments are accumulated into list.
 
 Isn't it awesome how `optparse` and `argparse` generate help messages
 based on your code?!
