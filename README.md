@@ -8,7 +8,7 @@
 This is the javascript port of [`docopt`](https://github.com/docopt/docopt),
 the awesome option parser written originally in python.
 
-Isn't it awesome how `optparse` and `argparse` generate help messages
+Isn't it awesome how `yargs` and `commander` generate help messages
 based on your code?!
 
 *Hell no!*  You know what's awesome?  It's when the option parser *is* generated
@@ -75,7 +75,7 @@ the option parser.  The simple rules of how to write such a docstring
 (in order to generate option parser from it successfully) are given in the next
 section. Here is a quick example of such a string:
 
-        Usage: your_program.rb [options]
+        Usage: your_program [options]
 
         -h --help     Show this.
         -v --verbose  Print more text.
@@ -102,14 +102,14 @@ Note, when `docopt` is set to automatically handle `-h`, `--help` and
 `--version` options, you still need to mention them in the options description
 (`doc`) for your users to know about them.
 
-The **return** value is just a dictionary with options, arguments and commands,
+The **return** value is just an object with options, arguments and commands,
 with keys spelled exactly like in a help message
 (long versions of options are given priority). For example, if you invoke
 the top example as:
-
-    naval_fate.rb ship Guardian move 100 150 --speed=15
-
-the return dictionary will be:
+```sh
+naval_fate ship Guardian move 100 150 --speed=15
+```
+the return object will be:
 
 ```json
 {
@@ -134,7 +134,7 @@ the return dictionary will be:
 Help message format
 ===============================================================================
 
-docopt.rb follows the docopt help message format.
+`docopt.js` follows the docopt help message format.
 You can find more details at
 [official docopt git repo](https://github.com/docopt/docopt#help-message-format)
 
@@ -147,7 +147,7 @@ We have an extensive list of
 which cover every aspect of functionality of `docopt`.  Try them out,
 read the source if in doubt.
 
-Data validation
+<!-- Data validation
 -------------------------------------------------------------------------------
 
 `docopt` does one thing and does it well: it implements your command-line
@@ -155,7 +155,7 @@ interface.  However it does not validate the input data.  We are looking
 for ruby validation libraries to make your option parsing experiene
 even more awesome!
 If you've got any suggestions or think your awesome schema validation gem
-fits well with `docopt.rb`, open an issue on github and enjoy the eternal glory!
+fits well with `docopt.js`, open an issue on github and enjoy the eternal glory! -->
 
 Contribution
 ===============================================================================
@@ -166,8 +166,7 @@ Contribute, make pull requests, report bugs, suggest ideas and discuss
 [issues page](http://github.com/docopt/docopt.js/issues).
 
 If you want to discuss the original `docopt` reference,
-point to [it's home](http://github.com/docopt/docopt) or
-drop a line directly to vladimir@keleshev.com!
+point to [it's home](http://github.com/docopt/docopt)
 
 Porting `docopt` to other languages
 ===============================================================================
