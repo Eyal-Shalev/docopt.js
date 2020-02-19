@@ -1,9 +1,10 @@
 `docopt.js` – command line option parser, that will make you smile
 ===============================================================================
 [![Build Status](https://travis-ci.org/Eyal-Shalev/docopt.js.svg?branch=master)](https://travis-ci.org/Eyal-Shalev/docopt.js)
-[![docopt.js v1.0.0](https://img.shields.io/badge/docopt.js-1.0.0-blueviolet)](https://github.com/Eyal-Shalev/docopt.js)
+[![docopt.js v1.0.0](https://img.shields.io/github/package-json/v/Eyal-Shalev/docopt.js?label=Docopt.js)](https://github.com)
 [![node >= 12.16.0](https://img.shields.io/badge/node-%3E%3D%2012.16.0-brightgreen)](https://nodejs.org/)
 [![deno >= 0.33.0](https://img.shields.io/badge/deno-%3E%3D0.33.0-black)](https://deno.land/)
+<!-- [![on npm](https://img.shields.io/npm/dw/docopt.js)](https://npmjs.com/package/docopt.js) -->
 
 This is the javascript port of [`docopt`](https://github.com/docopt/docopt),
 the awesome option parser written originally in python.
@@ -152,7 +153,7 @@ read the source if in doubt.
 
 `docopt` does one thing and does it well: it implements your command-line
 interface.  However it does not validate the input data.  We are looking
-for ruby validation libraries to make your option parsing experiene
+for ruby validation libraries to make your option parsing experience
 even more awesome!
 If you've got any suggestions or think your awesome schema validation gem
 fits well with `docopt.js`, open an issue on github and enjoy the eternal glory! -->
