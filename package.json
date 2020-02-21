@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "type": "module",
   "description": "command line option parser, that will make you smile",
-  "main": "src/docopt.mjs",
+  "main": "commonjs/docopt.js",
   "directories": {
     "example": "examples",
     "test": "test"
   },
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^13.7.1"
+    "@types/node": "^13.7.1",
+    "tslint": "^6.0.0",
+    "typescript": "^3.7.5"
   },
   "engines": {
     "node": ">=12.16.0"

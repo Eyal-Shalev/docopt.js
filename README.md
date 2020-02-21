@@ -19,7 +19,7 @@ write only the help message--*the way you want it*.
 `docopt` helps you create most beautiful command-line interfaces *easily*:
 
 ```javascript
-import docopt from "./src/docopt.mjs";
+import docopt from "./dist/docopt.esm.mjs";
 const doc = `
 Naval Fate.
 
@@ -59,9 +59,9 @@ Installation
 
 Docopt is available via JavaScript import:
 
-    import docopt from "https://raw.githubusercontent.com/docopt/docopt.js/master/src/docopt.mjs"
+    import docopt from "https://raw.githubusercontent.com/docopt/docopt.js/master/dist/docopt.esm.mjs"
 
-Alternatively, you can just drop `src/docopt.mjs` file into your project--it is
+Alternatively, you can just drop `dist/docopt.esm.mjs` file into your project--it is
 self-contained. [Get source on github](http://github.com/docopt/docopt.js).
 
 API
