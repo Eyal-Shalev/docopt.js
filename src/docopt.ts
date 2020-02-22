@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 Eyal Shalev <eyalsh@gmail.com>
+ */
+
 export const VERSION = '1.0.0';
 
 type Constructor<T> = { new(...args: any[]): T }
@@ -29,7 +33,7 @@ const docopt = (doc: string, init: Params = {}): DocOptions => {
   let [matched, left, collected] = pattern.fix().match(argv);
   collected = collected || [];
   if (matched && left && left.length === 0) {
-    return Object.fromEntries((pattern.flat() as ChildPattern[]).concat(collected).map(a => [a.name, a.value]));
+    return objectFromEntries((pattern.flat() as ChildPattern[]).concat(collected).map<[string, Value]>(a => [a.name as string, a.value]));
   }
   throw new Exit();
 };
@@ -549,7 +553,7 @@ abstract class ParentPattern extends Pattern {
     if (types.includes(this.constructor as Constructor<Pattern>)) {
       return [this];
     } else {
-      return this.children.map((c: Pattern) => c.flat(...types)).flat();
+      return flatten(this.children.map((c: Pattern) => c.flat(...types)));
     }
   }
 
@@ -656,3 +660,33 @@ const stringPartition = (source: string, expr: string): [string, string, string]
 
 declare var Deno: any;
 const processArgv = (): string[] => (typeof Deno !== 'undefined' && Deno.args) || (typeof process !== 'undefined' && process.argv.slice(2)) || [];
+
+function flatten<T>(arr: any[], depth: number=1): T[] {
+  return Array.prototype.flat?.apply(arr, [depth]) || (
+    depth === 0 ? arr : flatten([].concat(...arr), depth - 1)
+  );
+}
+
+type Dictionary<T> = { [k in PropertyKey]: T }
+type Entries<T> = Iterable<readonly [PropertyKey, T]>;
+const objectFromEntries = Object.fromEntries || (
+  <T = any>(entries: Entries<T>): Dictionary<T> => {
+    if (entries === null || entries === undefined) {
+      throw TypeError();
+    }
+    const obj = {};
+    const iterator = entries[Symbol.iterator]();
+    let record = iterator.next();
+    while (!record.done) {
+      const [k, v] = record.value;
+      Object.defineProperty(obj, k, {
+        value: v,
+        writable: true,
+        enumerable: true,
+        configurable: true,
+      });
+      record = iterator.next();
+    }
+    return obj;
+  }
+);

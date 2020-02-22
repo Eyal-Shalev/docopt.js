@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "lib": ["ES2018", "ES2019.Array", "ES2019.Object"],
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "outDir": "./commonjs"
+  },
+  "extends": "./tsconfig"
+}
