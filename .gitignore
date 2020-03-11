@@ -2,3 +2,4 @@
 node_modules
 deno.d.ts
 /package-lock.json
+tsconfig.tsbuildinfo

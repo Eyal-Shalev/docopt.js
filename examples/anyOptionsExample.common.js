@@ -1,10 +1,10 @@
-import docopt from "../esm/docopt.js";
+const docopt = require('../commonjs/docopt.js').default;
 
 const doc = `
 Example of program which uses [options] shortcut in pattern.
 
 Usage:
-  ${import.meta.url} [options] <port>
+  ${process.argv[1]} [options] <port>
 
 Options:
   -h --help                show this help message and exit

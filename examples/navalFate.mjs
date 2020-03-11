@@ -1,4 +1,4 @@
-import docopt from "../src/docopt.mjs";
+import docopt from "../esm/docopt.js";
 const doc = `
 Naval Fate.
 

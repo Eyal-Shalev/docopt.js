@@ -1,69 +1,56 @@
+/*
+ * Copyright (c) 2020 Eyal Shalev <eyalsh@gmail.com>
+ */
+
 export const VERSION = '1.0.0';
 
-/**
- * @typedef {Object} Params
- * @property {string[]} [argv]
- * @property {boolean} [help]
- * @property {string} [version]
- * @property {boolean} [optionsFirst]
- */
+type Constructor<T> = { new(...args: any[]): T }
+type Value = null | boolean | number | string | string[]
+export type DocOptions = { [k: string]: Value }
 
-/**
- * @type {Readonly<Params>}
- */
+interface Params {
+  argv?: string[]
+  help?: boolean
+  version?: string
+  optionsFirst?: boolean
+}
+
 const defaultParams = Object.freeze({help: true, optionsFirst: false});
 
-/**
- * @param doc {string}
- * @param init {Params}
- * @return {Object.<string, (null|boolean|number|string|string[])>}
- * @throws {Exit}
- */
-const docopt = (doc, init = {}) => {
+const docopt = (doc: string, init: Params = {}): DocOptions => {
   const params = {...defaultParams, ...init};
   params.argv = params.argv || processArgv();
   Exit.usage = printableUsage(doc);
   const options = parseDefaults(doc);
-  const pattern = parsePattern(formalUsage(Exit.usage), options);
+  const pattern = parsePattern(formalUsage(Exit.usage || ''), options);
   const argv = parseArgv(new TokenStream(params.argv, Exit), options, params.optionsFirst);
   const patternOptions = uniqueMap(pattern.flat(Option));
   pattern.flat(AnyOptions).forEach(ao => {
     const docOptions = parseDefaults(doc);
     ao.children = unique(docOptions.filter(o => !patternOptions.has(o.toString())));
   });
-  extras(params.help, params.version, argv, doc);
+  extras(params.help, params.version, argv.filter(x => x instanceof Option) as Option[], doc);
   let [matched, left, collected] = pattern.fix().match(argv);
   collected = collected || [];
   if (matched && left && left.length === 0) {
-    return Object.fromEntries(pattern.flat().concat(collected).map(a => [a.name, a.value]));
+    return objectFromEntries((pattern.flat() as ChildPattern[]).concat(collected).map<[string, Value]>(a => [a.name as string, a.value]));
   }
   throw new Exit();
 };
 export default docopt;
 
-/**
- * @param help {boolean}
- * @param version {string|undefined}
- * @param options {Option[]}
- * @param doc {string}
- * @throws {Exit}
- */
-const extras = (help, version, options, doc) => {
-  if (help && options.filter(o => ['-h', '--help'].includes(o.name)).length > 0) {
-    Exit.usage = null;
+const extras = (help: boolean, version: string | undefined, options: Option[], doc: string): void => {
+  if (help && options.filter(o => (['-h', '--help'] as any[]).includes(o.name)).length > 0) {
+    Exit.usage = undefined;
     throw new Exit(doc.trim());
   }
   if (version && options.filter(o => o.name === '--version' && o.value).length > 0) {
-    Exit.usage = null;
+    Exit.usage = undefined;
     throw new Exit(version);
   }
 };
 
-/**
- * @param doc {string}
- * @return {string}
- */
-const printableUsage = (doc) => {
+const printableUsage = (doc: string): string => {
   const usageSplit = doc.split(/([Uu][Ss][Aa][Gg][Ee]:)/);
   if (usageSplit.length < 3) {
     throw new DocoptLanguageError('"usage:" (case-insensitive) not found.');
@@ -74,20 +61,14 @@ const printableUsage = (doc) => {
   return usageSplit.slice(1).join('').split(/\n\s*\n/)[0].trim();
 };
 
-/**
- * @param tokens {TokenStream}
- * @param options {Option[]}
- * @param optionsFirst {boolean}
- * @return {(Argument|Option)[]}
- */
-const parseArgv = (tokens, options, optionsFirst = false) => {
+const parseArgv = (tokens: TokenStream, options: Option[], optionsFirst: Boolean = false): (Argument | Option)[] => {
   const parsed = [];
   while (tokens.current() !== null) {
     if (tokens.current() === '--') {
       return parsed.concat(tokens.map((v) => new Argument(null, v)));
-    } else if (tokens.current().startsWith('--')) {
+    } else if (tokens.current()?.startsWith('--')) {
       parsed.push(...parseLong(tokens, options));
-    } else if ((tokens.current().startsWith('-')) && tokens.current() !== '-') {
+    } else if ((tokens.current()?.startsWith('-')) && tokens.current() !== '-') {
       parsed.push(...parseShorts(tokens, options));
     } else if (optionsFirst) {
       return parsed.concat(tokens.map((v) => new Argument(null, v)));
@@ -98,21 +79,13 @@ const parseArgv = (tokens, options, optionsFirst = false) => {
   return parsed;
 };
 
-/**
- * @param doc {string}
- * @return {Option[]}
- */
-const parseDefaults = (doc) => {
+const parseDefaults = (doc: string): Option[] => {
   let split = doc.split(/^ *(<\S+?>|-\S+?)/mg).slice(1);
   split = eachSlice(split, 2).filter(pair => pair.length === 2).map(([s1, s2]) => s1 + s2);
   return split.filter(s => s.startsWith('-')).map(s => Option.parse(s));
 };
 
-/**
- * @param printableUsage {string}
- * @return {string}
- */
-const formalUsage = (printableUsage) => {
+const formalUsage = (printableUsage: string): string => {
   const pu = printableUsage.split(/\s+/g).slice(1); // split and drop "usage:"
   const ret = [];
   for (let s of pu.slice(1)) {
@@ -125,14 +98,9 @@ const formalUsage = (printableUsage) => {
   return `( ${ret.join(' ')} )`;
 };
 
-/**
- * @param tokens {TokenStream}
- * @param options {Option[]}
- * @return {[Option]}
- */
-const parseLong = (tokens, options) => {
-  let long, eq, value;
-  [long, eq, value] = stringPartition(tokens.move(), '=');
+const parseLong = (tokens: TokenStream, options: Option[]): [Option] => {
+  let long: string, eq: string, value: string | null;
+  [long, eq, value] = stringPartition(tokens?.move() || '', '=');
   if (!long.startsWith('--')) {
     throw new Error('Invalid runtime state');
   }
@@ -174,21 +142,16 @@ const parseLong = (tokens, options) => {
   return [o];
 };
 
-/**
- * @param tokens {TokenStream}
- * @param options {Option[]}
- * @return {Option[]}
- */
-const parseShorts = (tokens, options) => {
+const parseShorts = (tokens: TokenStream, options: Option[]): Option[] => {
   const token = tokens.move();
-  if (!token.startsWith('-') || token.startsWith('--')) {
+  if (!token || !token.startsWith('-') || token.startsWith('--')) {
     throw new Error('Invalid runtime state');
   }
-  let left = token.substring(1);
+  let left = token?.substring(1);
   const parsed = [];
-  while (left !== '') {
-    let o;
-    let short;
+  while (left && left !== '') {
+    let o: Option;
+    let short: string;
     [short, left] = ['-' + left[0], left.substring(1)];
     const similar = options.filter(o => o.short === short);
     if (similar.length > 1) {
@@ -223,12 +186,7 @@ const parseShorts = (tokens, options) => {
   return parsed;
 };
 
-/**
- * @param source {string}
- * @param options {Option[]}
- * @return {Required}
- */
-const parsePattern = (source, options) => {
+const parsePattern = (source: string, options: Option[]): Required => {
   const tokens = new TokenStream(source.replace(/([\[\]\(\)\|]|\.\.\.)/g, ' $1 '), DocoptLanguageError);
   const result = parseExpr(tokens, options);
   if (tokens.current() != null) {
@@ -237,12 +195,7 @@ const parsePattern = (source, options) => {
   return new Required(...result);
 };
 
-/**
- * @param tokens {TokenStream}
- * @param options {Option[]}
- * @return {Pattern[]}
- */
-const parseExpr = (tokens, options) => {
+const parseExpr = (tokens: TokenStream, options: Option[]): Pattern[] => {
   let seq = parseSeq(tokens, options);
   if (tokens.current() !== '|') {
     return seq;
@@ -256,12 +209,7 @@ const parseExpr = (tokens, options) => {
   return result.length > 1 ? [new Either(...result)] : result;
 };
 
-/**
- * @param tokens {TokenStream}
- * @param options {Option[]}
- * @return {Pattern[]}
- */
-const parseSeq = (tokens, options) => {
+const parseSeq = (tokens: TokenStream, options: Option[]): Pattern[] => {
   const result = [];
   const stop = [undefined, null, ']', ')', '|'];
   while (!stop.includes(tokens.current())) {
@@ -275,16 +223,11 @@ const parseSeq = (tokens, options) => {
   return result;
 };
 
-/**
- * @param tokens {TokenStream}
- * @param options {Option[]}
- * @return {Pattern[]}
- */
-const parseAtom = (tokens, options) => {
+const parseAtom = (tokens: TokenStream, options: Option[]): Pattern[] => {
   const token = tokens.current();
   let matching;
   let pattern;
-  if (['(', '['].includes(token)) {
+  if ((['(', '['] as any[]).includes(token)) {
     tokens.move();
     if (token === '(') {
       matching = ')';
@@ -301,14 +244,14 @@ const parseAtom = (tokens, options) => {
   } else if (token === 'options') {
     tokens.move();
     return [new AnyOptions()];
-  } else if ((token.startsWith('--')) && token !== '--') {
+  } else if ((token?.startsWith('--')) && token !== '--') {
     return parseLong(tokens, options);
-  } else if ((token.startsWith('-')) && !['-', '--'].includes(token)) {
+  } else if ((token?.startsWith('-')) && !['-', '--'].includes(token)) {
     return parseShorts(tokens, options);
-  } else if ((token.startsWith('<')) && (token.endsWith('>')) || ((token.toUpperCase()) === token && (token.match(/[A-Z]/)))) {
-    return [new Argument(tokens.move())];
+  } else if ((token?.startsWith('<')) && (token.endsWith('>')) || ((token?.toUpperCase()) === token && (token.match(/[A-Z]/)))) {
+    return [new Argument(tokens.move() as string)];
   } else {
-    return [new Command(tokens.move())];
+    return [new Command(tokens.move() as string)];
   }
 };
 
@@ -316,100 +259,57 @@ class DocoptLanguageError extends Error {
 }
 
 class Exit extends Error {
-  /**
-   * @param _message {string}
-   */
-  constructor(_message = '') {
+  constructor(private readonly _message: string = '') {
     super();
-    this._message = _message;
   }
 
-  /**
-   * @return {string}
-   */
-  get message() {
+  get message(): string {
     return `${this._message}\n${Exit.usage || ''}`.trim();
   }
 
-  /**
-   * @type {string}
-   */
-  static usage = '';
+  public static usage?: string;
 }
 
 class TokenStream extends Array {
-  /**
-   * @param source {string|string[]}
-   * @param error {Function}
-   */
-  constructor(source = [], error) {
+
+  constructor(source: string | string[] = [], public readonly error: Constructor<Error>) {
     super();
-    this.error = error;
     if (typeof source === 'string') {
       source = source.trim().split(/\s+/g);
     }
     this.push(...source);
   }
 
-  /**
-   * @return {string|null}
-   */
-  move() {
+  move(): string | null {
     return this.shift();
   }
 
-  /**
-   * @return {string|null}
-   */
-  current() {
+  current(): string | null {
     return this.length > 0 ? this[0] : null;
   }
 }
 
-class Pattern {
+type MatchResult = [boolean, Pattern[], ChildPattern[]];
 
-  /**
-   * @type {Pattern[]}
-   */
-  children;
+abstract class Pattern {
 
-  /**
-   * @return {string}
-   */
-  toString() {
+  children?: Pattern[];
+
+  toString(): string {
     return `${this.constructor.name}()`;
   }
 
-  /**
-   * @return {Pattern}
-   */
-  fix() {
+  fix(): this {
     this.fixIdentities();
     this.fixRepeatingArguments();
     return this;
   }
 
-  /**
-   * @param types {...Function}
-   * @return {Pattern[]}
-   */
-  flat(...types) {
-    throw new TypeError('Unimplemented function');
-  }
+  abstract flat(...types: Constructor<Pattern>[]): Pattern[];
 
-  /**
-   * @param left {Pattern[]}
-   * @param collected {Pattern[]}
-   * @return {[boolean, Pattern[], Pattern[]]}
-   */
-  match(left, collected = []) {
-    throw new TypeError('Unimplemented function');
-  }
+  abstract match(left: Pattern[], collected: ChildPattern[]): MatchResult;
 
-  /**
-   * @return {Pattern}
-   */
-  fixIdentities(uniq) {
+  fixIdentities(uniq?: Map<string, Pattern>): Pattern {
     if (!this.children) {
       return this;
     }
@@ -421,7 +321,8 @@ class Pattern {
           if (!(uniq.has(c.toString()))) {
             throw new Error('Invalid runtime state');
           }
-          this.children[i] = uniq.get(c.toString());
+          this.children = this.children || [];
+          this.children[i] = uniq.get(c.toString()) as Pattern;
         } else {
           c.fixIdentities(uniq);
         }
@@ -430,16 +331,13 @@ class Pattern {
     return this;
   }
 
-  /**
-   * @return {Pattern}
-   */
-  fixRepeatingArguments() {
+  fixRepeatingArguments(): this {
     this.either().children.map(c => c.children).forEach(case_ => {
-      case_.filter(c => c instanceof ChildPattern && case_.filter(x => c.equalTo(x)).length > 1).forEach(e => {
+      case_?.filter(c => c instanceof ChildPattern && case_.filter(x => c.equalTo(x)).length > 1).forEach(e => {
         if (e instanceof Argument || (e instanceof Option && e.argCount > 0)) {
           if (!e.value) {
             e.value = [];
-          } else if (!(e.value instanceof Array)) {
+          } else if (typeof e.value === 'string') {
             e.value = e.value.split(/\s+/g);
           }
         }
@@ -448,43 +346,41 @@ class Pattern {
         }
       });
     });
+
     return this;
   }
 
-  /**
-   * @return {Either}
-   */
-  either() {
+  either(): Either {
     const ret = [];
-    const groups = [[this]];
+    const groups: Pattern[][] = [[this]];
     while (groups.length > 0) {
-      const children = groups.shift();
+      const children = groups.shift() as Pattern[];
       const types = children.map(child => child.constructor);
       if (types.includes(Either)) {
         const i = children.findIndex(child => child instanceof Either);
-        const either = children[i];
+        const either = children[i] as Either;
         children.splice(i, 1);
         for (let c of either.children) {
           groups.push([c, ...children]);
         }
       } else if (types.includes(Required)) {
         const i = children.findIndex(child => child instanceof Required);
-        const required = children[i];
+        const required = children[i] as Required;
         children.splice(i, 1);
         groups.push(required.children.concat(children));
       } else if (types.includes(Optional)) {
         const i = children.findIndex(child => child instanceof Optional);
-        const optional = children[i];
+        const optional = children[i] as Optional;
         children.splice(i, 1);
         groups.push(optional.children.concat(children));
       } else if (types.includes(AnyOptions)) {
         const i = children.findIndex(child => child instanceof AnyOptions);
-        const anyOptions = children[i];
+        const anyOptions = children[i] as AnyOptions;
         children.splice(i, 1);
         groups.push(anyOptions.children.concat(children));
       } else if (types.includes(OneOrMore)) {
         const i = children.findIndex(child => child instanceof OneOrMore);
-        const oneOrMore = children[i];
+        const oneOrMore = children[i] as OneOrMore;
         children.splice(i, 1);
         groups.push([...oneOrMore.children, ...oneOrMore.children, ...children]);
       } else {
@@ -496,56 +392,38 @@ class Pattern {
   }
 }
 
-class ChildPattern extends Pattern {
+abstract class ChildPattern extends Pattern {
 
-  /**
-   * @param name {string|null}
-   * @param value {string|null}
-   */
-  constructor(name, value = null) {
+  public children: undefined;
+
+  constructor(public name: string | null, public value: Value = null) {
     super();
-    this.name = name;
-    this.value = value;
   }
 
-  /**
-   * @param other {*}
-   * @return {boolean}
-   */
-  equalTo(other) {
-    return other.constructor === this.constructor && this.name === other.name && this.value === other.value;
+  equalTo(other: any): boolean {
+    return other === this || (other.constructor === this.constructor && this.name === other.name && this.value === other.value);
   }
 
-  /**
-   * @return {string}
-   */
-  toString() {
+  toString(): string {
     return `${this.constructor.name}(${this.name}, ${this.value === null ? '' : this.value})`;
   }
 
-  /**
-   * @param types {...Function}
-   * @return {Pattern[]}
-   */
-  flat(...types) {
-    if (types.length === 0 || types.includes(this.constructor)) {
+  flat(...types: Constructor<Pattern>[]): Pattern[] {
+    if (types.length === 0 || types.includes(this.constructor as Constructor<Pattern>)) {
       return [this];
     }
     return [];
   }
 
-  /**
-   * @param left {Pattern[]}
-   * @param collected {Pattern[]}
-   * @return {[boolean, Pattern[], Pattern[]]}
-   */
-  match(left, collected = []) {
+  abstract singleMatch(left: Pattern[]): ([number, ChildPattern] | [-1, null]);
+
+  match(left: Pattern[], collected: ChildPattern[] = []): MatchResult {
     const [pos, match] = this.singleMatch(left);
     if (!match) {
       return [false, left, collected];
     }
     left = [...left.slice(0, pos), ...left.slice(pos + 1)];
-    const sameName = collected.filter(a => a.name === this.name);
+    const sameName = collected.filter(a => a instanceof ChildPattern && a.name === this.name) as ChildPattern[];
     if (this.value instanceof Array || typeof this.value === 'number') {
       let increment;
       if (typeof this.value === 'number') {
@@ -557,10 +435,12 @@ class ChildPattern extends Pattern {
         match.value = increment;
         return [true, left, [...collected, match]];
       }
-      if (increment instanceof Array) {
+      if (increment instanceof Array && sameName[0].value instanceof Array) {
         sameName[0].value.push(...increment);
-      } else {
+      } else if (!!increment && typeof sameName[0].value === 'number' && typeof increment === 'number') {
         sameName[0].value += increment;
+      } else {
+        throw new Error('Invalid runtime state');
       }
       return [true, left, collected];
     }
@@ -570,17 +450,8 @@ class ChildPattern extends Pattern {
 
 class Option extends ChildPattern {
 
-  /**
-   * @param short {string|null}
-   * @param long {string|null}
-   * @param argCount {number}
-   * @param value {*}
-   */
-  constructor(short, long, argCount = 0, value = false) {
+  constructor(public short: string | null, public long: string | null, public argCount: number = 0, value: Value = false) {
     super((long || short), value);
-    this.short = short;
-    this.long = long;
-    this.argCount = argCount;
     if (![0, 1].includes(argCount)) {
       throw new Error('Invalid runtime state');
     }
@@ -589,22 +460,15 @@ class Option extends ChildPattern {
     }
   }
 
-  /**
-   * @return {string}
-   */
-  toString() {
+  toString(): string {
     return `Option(${this.short || ''}, ${this.long || ''}, ${this.argCount}, ${this.value !== null ? this.value : ''})`;
   }
 
-  /**
-   * @param optionDescription {string}
-   * @return {Option}
-   */
-  static parse(optionDescription) {
+  static parse(optionDescription: string): Option {
     let short = null;
     let long = null;
     let argCount = 0;
-    let value = false;
+    let value: string | false = false;
     let [options, , description] = stringPartition(optionDescription.trim(), '  ');
     options = options.replace(/,/g, ' ').replace(/=/g, ' ');
     for (let s of options.split(/\s+/g)) {
@@ -625,11 +489,7 @@ class Option extends ChildPattern {
     return new Option(short, long, argCount, value);
   }
 
-  /**
-   * @param left {Pattern[]}
-   * @return {[number, ChildPattern]}
-   */
-  singleMatch(left) {
+  singleMatch(left: Pattern[]): ([number, ChildPattern] | [-1, null]) {
     for (let i = 0; i < left.length; i++) {
       const p = left[i];
       if (p instanceof ChildPattern && this.name === p.name) {
@@ -642,11 +502,7 @@ class Option extends ChildPattern {
 
 class Argument extends ChildPattern {
 
-  /**
-   * @param left {Pattern[]}
-   * @return {[number, Argument]}
-   */
-  singleMatch(left) {
+  singleMatch(left: Pattern[]): ([number, Argument] | [-1, null]) {
     for (let i = 0; i < left.length; i++) {
       const p = left[i];
       if (p instanceof Argument) {
@@ -656,34 +512,20 @@ class Argument extends ChildPattern {
     return [-1, null];
   }
 
-  /**
-   * @param class_ {Function}
-   * @param source {string}
-   * @return {Argument}
-   */
-  static parse(class_, source) {
-    const name = source.match(/(<\S*?>)/)[0];
+  static parse(class_: Constructor<Argument>, source: string): Argument {
+    const name = source.match(/(<\S*?>)/)?.[0];
     const value = source.match(/\[default: (.*)\]/i);
     return new class_(name, (value ? value[0] : null));
   }
 }
 
 class Command extends Argument {
-  /**
-   * @param name {string}
-   * @param value {boolean}
-   */
-  constructor(name, value = false) {
+
+  constructor(public name: string, value: boolean = false) {
     super(name, value);
-    this.name = name;
-    this.value = value;
   }
 
-  /**
-   * @param left {Pattern[]}
-   * @return {[number, Command]}
-   */
-  singleMatch(left) {
+  singleMatch(left: Pattern[]): ([number, Command] | [-1, null]) {
     for (let i = 0; i < left.length; i++) {
       const p = left[i];
       if (p instanceof Argument) {
@@ -698,44 +540,31 @@ class Command extends Argument {
   }
 }
 
-class ParentPattern extends Pattern {
+abstract class ParentPattern extends Pattern {
 
-  /**
-   * @param children {...Pattern}
-   */
-  constructor(...children) {
+  public children: Pattern[] = [];
+
+  constructor(...children: Pattern[]) {
     super();
     this.children = children;
   }
 
-  /**
-   * @param types {...Function}
-   * @return {Pattern[]}
-   */
-  flat(...types) {
-    if (types.includes(this.constructor)) {
+  flat(...types: Constructor<Pattern>[]): Pattern[] {
+    if (types.includes(this.constructor as Constructor<Pattern>)) {
       return [this];
     } else {
-      return this.children.flatMap(c => c.flat(...types));
+      return flatten(this.children.map((c: Pattern) => c.flat(...types)));
     }
   }
 
-  /**
-   * @return {string}
-   */
-  toString() {
+  toString(): string {
     return `${this.constructor.name}(${this.children.map(c => c.toString()).join(', ')})`;
   }
 }
 
 class Required extends ParentPattern {
 
-  /**
-   * @param left {Pattern[]}
-   * @param collected {Pattern[]}
-   * @return {[boolean, Pattern[], Pattern[]]}
-   */
-  match(left, collected = []) {
+  match(left: Pattern[], collected: ChildPattern[] = []): MatchResult {
     let l = left;
     let [c, matched] = [collected, false];
     for (const p of this.children) {
@@ -750,12 +579,7 @@ class Required extends ParentPattern {
 
 class Optional extends ParentPattern {
 
-  /**
-   * @param left {Pattern[]}
-   * @param collected {Pattern[]}
-   * @return {[boolean, Pattern[], Pattern[]]}
-   */
-  match(left, collected = []) {
+  match(left: Pattern[], collected: ChildPattern[] = []): MatchResult {
     for (const p of this.children) {
       [, left, collected] = p.match(left, collected);
     }
@@ -768,12 +592,7 @@ class AnyOptions extends Optional {
 
 class OneOrMore extends ParentPattern {
 
-  /**
-   * @param left {Pattern[]}
-   * @param collected {Pattern[]}
-   * @return {[boolean, Pattern[], Pattern[]]}
-   */
-  match(left, collected = []) {
+  match(left: Pattern[], collected: ChildPattern[] = []): MatchResult {
     if (this.children.length !== 1) {
       throw new Error('Invalid runtime state');
     }
@@ -797,20 +616,15 @@ class OneOrMore extends ParentPattern {
 
 class Either extends ParentPattern {
 
-  /**
-   * @param left {Pattern[]}
-   * @param collected {Pattern[]}
-   * @return {[boolean, Pattern[], Pattern[]]}
-   */
-  match(left, collected = []) {
-    const outcomes = [];
+  match(left: Pattern[], collected: ChildPattern[] = []): MatchResult {
+    const outcomes: MatchResult[] = [];
     for (const p of this.children) {
       const found = p.match(left, collected);
       if (found[0]) {
         outcomes.push(found);
       }
     }
-    const outcomeSize = (outcome) => outcome[1] === null ? 0 : outcome[1].length;
+    const outcomeSize = (outcome: MatchResult) => outcome[1] === null ? 0 : outcome[1].length;
     if (outcomes.length > 0) {
       return outcomes.sort((a, b) => outcomeSize(a) - outcomeSize(b))[0];
     }
@@ -818,33 +632,17 @@ class Either extends ParentPattern {
   }
 }
 
-/**
- * @param arr {T[]}
- * @return {Map<string, T>}
- * @template T
- */
-const uniqueMap = (arr) => {
+const uniqueMap = <T extends Object>(arr: T[]): Map<string, T> => {
   const m = new Map();
   arr.forEach(t => m.has(t.toString()) || m.set(t.toString(), t));
   return m;
 };
 
-/**
- * @param arr {T[]}
- * @return {T[]}
- * @template T
- */
-const unique = (arr) => {
+const unique = <T>(arr: T[]): T[] => {
   return Array.from(uniqueMap(arr).values());
 };
 
-/**
- * @param orig {T[]}
- * @param size {number}
- * @return {T[][]}
- * @template T
- */
-const eachSlice = (orig, size) => {
+const eachSlice = <T>(orig: T[], size: number): T[][] => {
   const arr = [];
   for (let i = 0, l = orig.length; i < l; i += size) {
     arr.push(orig.slice(i, i + size));
@@ -852,12 +650,7 @@ const eachSlice = (orig, size) => {
   return arr;
 };
 
-/**
- * @param source {string}
- * @param expr {string}
- * @return {[string, string, string]}
- */
-const stringPartition = (source, expr) => {
+const stringPartition = (source: string, expr: string): [string, string, string] => {
   const i = source.indexOf(expr);
   if (i < 0) {
     return [source, '', ''];
@@ -865,7 +658,35 @@ const stringPartition = (source, expr) => {
   return [source.substring(0, i), expr, source.substring(i + expr.length)];
 };
 
-/**
- * @return {string[]}
- */
-const processArgv = () => (typeof Deno !== 'undefined' && Deno.args) || (typeof process !== 'undefined' && process.argv.slice(2)) || [];
+declare var Deno: any;
+const processArgv = (): string[] => (typeof Deno !== 'undefined' && Deno.args) || (typeof process !== 'undefined' && process.argv.slice(2)) || [];
+
+function flatten<T>(arr: any[], depth: number=1): T[] {
+  return Array.prototype.flat?.apply(arr, [depth]) || (
+    depth === 0 ? arr : flatten([].concat(...arr), depth - 1)
+  );
+}
+
+type Dictionary<T> = { [k in PropertyKey]: T }
+type Entries<T> = Iterable<readonly [PropertyKey, T]>;
+const objectFromEntries = Object.fromEntries || (
+  <T = any>(entries: Entries<T>): Dictionary<T> => {
+    if (entries === null || entries === undefined) {
+      throw TypeError();
+    }
+    const obj = {};
+    const iterator = entries[Symbol.iterator]();
+    let record = iterator.next();
+    while (!record.done) {
+      const [k, v] = record.value;
+      Object.defineProperty(obj, k, {
+        value: v,
+        writable: true,
+        enumerable: true,
+        configurable: true,
+      });
+      record = iterator.next();
+    }
+    return obj;
+  }
+);
