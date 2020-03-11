@@ -1,4 +1,4 @@
-import docopt from "../esm/docopt.js";
+import docopt from "../dist/docopt.js";
 
 const doc = `
 Example of program which uses [options] shortcut in pattern.

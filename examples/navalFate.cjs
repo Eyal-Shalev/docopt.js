@@ -4,12 +4,12 @@ const doc = `
 Naval Fate.
 
 Usage:
-  ${import.meta.url} ship new <name>...
-  ${import.meta.url} ship <name> move <x> <y> [--speed=<kn>]
-  ${import.meta.url} ship shoot <x> <y>
-  ${import.meta.url} mine (set|remove) <x> <y> [--moored|--drifting]
-  ${import.meta.url} -h | --help
-  ${import.meta.url} --version
+  ${__filename} ship new <name>...
+  ${__filename} ship <name> move <x> <y> [--speed=<kn>]
+  ${__filename} ship shoot <x> <y>
+  ${__filename} mine (set|remove) <x> <y> [--moored|--drifting]
+  ${__filename} -h | --help
+  ${__filename} --version
 
 Options:
   -h --help     Show this screen.

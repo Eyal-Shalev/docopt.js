@@ -1,5 +1,5 @@
 const fs = require('fs');
-const {default: docopt} = require('../commonjs/docopt.js');
+const {default: docopt} = require('../commonjs/docopt.cjs');
 
 const doc = fs.readFileSync(0, 'utf-8');
 

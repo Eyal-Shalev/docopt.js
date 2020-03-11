@@ -2,15 +2,14 @@
   "name": "docopt",
   "version": "1.0.0",
   "description": "command line option parser, that will make you smile",
-  "main": "commonjs/docopt.cjs",
+  "main": "dist/docopt.cjs",
   "directories": {
     "example": "examples",
     "test": "test",
     "lib": "src"
   },
   "files": [
-    "commonjs/**/*",
-    "esm/**/*",
+    "dist/**/*",
     "examples/**/*"
   ],
   "dependencies": {},
@@ -23,8 +22,8 @@
   },
   "scripts": {
     "test": "node test/test.mjs",
-    "compileEsm": "tsc",
-    "compileCommon": "tsc -b tsconfig.commonjs.json && mv commonjs/docopt.js commonjs/docopt.cjs",
+    "compileEsm": "tsc && mv dist/docopt.js dist/docopt.mjs",
+    "compileCommon": "tsc -b tsconfig.commonjs.json && mv commonjs/docopt.js dist/docopt.cjs && rm -rf commonjs",
     "prepublish": "npm run compileCommon && npm run compileEsm"
   },
   "repository": {
