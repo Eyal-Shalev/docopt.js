@@ -148,16 +148,6 @@ We have an extensive list of
 which cover every aspect of functionality of `docopt`.  Try them out,
 read the source if in doubt.
 
-<!-- Data validation
--------------------------------------------------------------------------------
-
-`docopt` does one thing and does it well: it implements your command-line
-interface.  However it does not validate the input data.  We are looking
-for ruby validation libraries to make your option parsing experience
-even more awesome!
-If you've got any suggestions or think your awesome schema validation gem
-fits well with `docopt.js`, open an issue on github and enjoy the eternal glory! -->
-
 Contribution
 ===============================================================================
 
