@@ -1,4 +1,4 @@
-import docopt from "../esm/docopt.js";
+const docopt = require('docopt').default;
 
 const doc = `
 Naval Fate.

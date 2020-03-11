@@ -1,0 +1,12 @@
+{
+  "name": "examples",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "docopt": ".."
+  },
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "MIT"
+}

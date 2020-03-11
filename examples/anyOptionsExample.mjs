@@ -16,7 +16,7 @@ Options:
 
 `;
 try {
-  console.log(docopt(doc, {version: '1.0.0rc2'}));
+  console.log(JSON.stringify(docopt(doc, {version: '1.0.0rc2'}), null, '\t'));
 } catch (e) {
   console.error(e.message);
 }

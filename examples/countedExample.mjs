@@ -1,4 +1,5 @@
 import docopt from "../esm/docopt.js";
+
 const doc = `
 Usage: ${import.meta.url} --help
        ${import.meta.url} -v...

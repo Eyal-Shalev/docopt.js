@@ -1,14 +1,14 @@
-import docopt from "../esm/docopt.js";
+const docopt = require('docopt').default;
 
 const doc = `
 Example of program with many options using docopt.
 
 Usage:
-  ${import.meta.url} [-hvqrf NAME] [--exclude=PATTERNS]
+  ${__filename} [-hvqrf NAME] [--exclude=PATTERNS]
                      [--select=ERRORS | --ignore=ERRORS] [--show-source]
                      [--statistics] [--count] [--benchmark] PATH...
-  ${import.meta.url} (--doctest | --testsuite=DIR)
-  ${import.meta.url} --version
+  ${__filename} (--doctest | --testsuite=DIR)
+  ${__filename} --version
 
 Arguments:
   PATH  destination path

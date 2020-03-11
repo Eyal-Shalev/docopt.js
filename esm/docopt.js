@@ -49,7 +49,7 @@ const parseArgv = (tokens, options, optionsFirst = false) => {
     const parsed = [];
     while (tokens.current() !== null) {
         if (tokens.current() === '--') {
-            return parsed.concat(tokens.map((v) => new Argument(null, v)));
+            return parsed.concat(tokens.next().map((v) => new Argument(null, v)));
         }
         else if ((_a = tokens.current()) === null || _a === void 0 ? void 0 : _a.startsWith('--')) {
             parsed.push(...parseLong(tokens, options));
@@ -262,16 +262,23 @@ class Exit extends Error {
     }
 }
 class TokenStream extends Array {
-    constructor(source = [], error) {
+    constructor(source = [], error = Exit) {
         super();
         this.error = error;
         if (typeof source === 'string') {
             source = source.trim().split(/\s+/g);
         }
+        if (typeof source === 'number') {
+            source = new Array(source);
+        }
         this.push(...source);
     }
     move() {
-        return this.shift();
+        return this.shift() || null;
+    }
+    next() {
+        this.shift();
+        return this;
     }
     current() {
         return this.length > 0 ? this[0] : null;
@@ -614,6 +621,7 @@ const stringPartition = (source, expr) => {
     }
     return [source.substring(0, i), expr, source.substring(i + expr.length)];
 };
+// @ts-ignore
 const processArgv = () => (typeof Deno !== 'undefined' && Deno.args) || (typeof process !== 'undefined' && process.argv.slice(2)) || [];
 function flatten(arr, depth = 1) {
     var _a;
@@ -638,4 +646,3 @@ const objectFromEntries = Object.fromEntries || ((entries) => {
     }
     return obj;
 });
-//# sourceMappingURL=docopt.js.map

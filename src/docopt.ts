@@ -65,7 +65,7 @@ const parseArgv = (tokens: TokenStream, options: Option[], optionsFirst: Boolean
   const parsed = [];
   while (tokens.current() !== null) {
     if (tokens.current() === '--') {
-      return parsed.concat(tokens.map((v) => new Argument(null, v)));
+      return parsed.concat(tokens.next().map((v) => new Argument(null, v)));
     } else if (tokens.current()?.startsWith('--')) {
       parsed.push(...parseLong(tokens, options));
     } else if ((tokens.current()?.startsWith('-')) && tokens.current() !== '-') {
@@ -270,18 +270,28 @@ class Exit extends Error {
   public static usage?: string;
 }
 
-class TokenStream extends Array {
+class TokenStream extends Array<string> {
 
-  constructor(source: string | string[] = [], public readonly error: Constructor<Error>) {
+  constructor(arrayLength?: number)
+  constructor(source?: string | string[], error?: Constructor<Error>)
+  constructor(source: number | string | string[] = [], public readonly error: Constructor<Error> = Exit) {
     super();
     if (typeof source === 'string') {
       source = source.trim().split(/\s+/g);
+    }
+    if (typeof source === 'number') {
+      source = new Array(source);
     }
     this.push(...source);
   }
 
   move(): string | null {
-    return this.shift();
+    return this.shift() || null;
+  }
+
+  next(): this {
+    this.shift();
+    return this;
   }
 
   current(): string | null {
@@ -659,9 +669,10 @@ const stringPartition = (source: string, expr: string): [string, string, string]
 };
 
 declare var Deno: any;
+// @ts-ignore
 const processArgv = (): string[] => (typeof Deno !== 'undefined' && Deno.args) || (typeof process !== 'undefined' && process.argv.slice(2)) || [];
 
-function flatten<T>(arr: any[], depth: number=1): T[] {
+function flatten<T>(arr: any[], depth: number = 1): T[] {
   return Array.prototype.flat?.apply(arr, [depth]) || (
     depth === 0 ? arr : flatten([].concat(...arr), depth - 1)
   );
@@ -680,9 +691,9 @@ const objectFromEntries = Object.fromEntries || (
     while (!record.done) {
       const [k, v] = record.value;
       Object.defineProperty(obj, k, {
-        value: v,
-        writable: true,
-        enumerable: true,
+        value:        v,
+        writable:     true,
+        enumerable:   true,
         configurable: true,
       });
       record = iterator.next();

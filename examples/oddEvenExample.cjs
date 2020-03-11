@@ -1,10 +1,10 @@
-import docopt from "../esm/docopt.js";
+const docopt = require('docopt').default;
 
 const doc = `
-Usage: ${import.meta.url} [-h | --help] (ODD EVEN)...
+Usage: ${__filename} [-h | --help] (ODD EVEN)...
 
 Example, try:
-  ${import.meta.url} 1 2 3 4
+  ${__filename} 1 2 3 4
 
 Options:
   -h, --help

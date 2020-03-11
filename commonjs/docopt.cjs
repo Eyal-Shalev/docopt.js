@@ -2,7 +2,6 @@
 /*
  * Copyright (c) 2020 Eyal Shalev <eyalsh@gmail.com>
  */
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VERSION = '1.0.0';
 const defaultParams = Object.freeze({ help: true, optionsFirst: false });
@@ -52,7 +51,7 @@ const parseArgv = (tokens, options, optionsFirst = false) => {
     const parsed = [];
     while (tokens.current() !== null) {
         if (tokens.current() === '--') {
-            return parsed.concat(tokens.map((v) => new Argument(null, v)));
+            return parsed.concat(tokens.next().map((v) => new Argument(null, v)));
         }
         else if ((_a = tokens.current()) === null || _a === void 0 ? void 0 : _a.startsWith('--')) {
             parsed.push(...parseLong(tokens, options));
@@ -265,16 +264,23 @@ class Exit extends Error {
     }
 }
 class TokenStream extends Array {
-    constructor(source = [], error) {
+    constructor(source = [], error = Exit) {
         super();
         this.error = error;
         if (typeof source === 'string') {
             source = source.trim().split(/\s+/g);
         }
+        if (typeof source === 'number') {
+            source = new Array(source);
+        }
         this.push(...source);
     }
     move() {
-        return this.shift();
+        return this.shift() || null;
+    }
+    next() {
+        this.shift();
+        return this;
     }
     current() {
         return this.length > 0 ? this[0] : null;
@@ -527,7 +533,7 @@ class ParentPattern extends Pattern {
             return [this];
         }
         else {
-            return flat(this.children.map((c) => c.flat(...types)));
+            return flatten(this.children.map((c) => c.flat(...types)));
         }
     }
     toString() {
@@ -617,11 +623,12 @@ const stringPartition = (source, expr) => {
     }
     return [source.substring(0, i), expr, source.substring(i + expr.length)];
 };
+// @ts-ignore
 const processArgv = () => (typeof Deno !== 'undefined' && Deno.args) || (typeof process !== 'undefined' && process.argv.slice(2)) || [];
-exports.processArgv =processArgv;
-const flat = ((_a = Array.prototype.flat) === null || _a === void 0 ? void 0 : _a.apply) || ((arr, depth = 1) => {
-    return depth === 0 ? arr : flat([].concat(...arr), depth - 1);
-});
+function flatten(arr, depth = 1) {
+    var _a;
+    return ((_a = Array.prototype.flat) === null || _a === void 0 ? void 0 : _a.apply(arr, [depth])) || (depth === 0 ? arr : flatten([].concat(...arr), depth - 1));
+}
 const objectFromEntries = Object.fromEntries || ((entries) => {
     if (entries === null || entries === undefined) {
         throw TypeError();
@@ -641,4 +648,3 @@ const objectFromEntries = Object.fromEntries || ((entries) => {
     }
     return obj;
 });
-//# sourceMappingURL=docopt.js.map
