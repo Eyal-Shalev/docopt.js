@@ -52,7 +52,7 @@ catch (e) {
 
 ### CommonJS modules
 ```javascript
-const docopt = require('docopt').default;
+const docopt = require('@eyalsh/docopt').default;
 
 const doc = `
 Naval Fate.

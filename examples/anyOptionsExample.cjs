@@ -1,4 +1,4 @@
-const docopt = require('docopt').default;
+const docopt = require('@eyalsh/docopt').default;
 
 const doc = `
 Example of program which uses [options] shortcut in pattern.
