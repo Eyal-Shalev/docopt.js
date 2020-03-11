@@ -5,7 +5,7 @@
 [![deno >= 0.33.0](https://img.shields.io/badge/deno-%3E%3D0.33.0-black)](https://deno.land/)
 [![on npm](https://img.shields.io/npm/dw/@eyalsh/docopt)](https://npmjs.com/package/@eyalsh/docopt)
 
-This is the javascript port of [`docopt`](https://github.com/eyal-shalev/docopt),
+This is the javascript port of [`docopt`](https://github.com/docopt/docopt),
 the awesome option parser written originally in python.
 
 Isn't it awesome how `yargs` and `commander` generate help messages
