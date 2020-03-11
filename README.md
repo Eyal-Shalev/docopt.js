@@ -4,7 +4,7 @@
 [![docopt.js v1.0.0](https://img.shields.io/github/package-json/v/Eyal-Shalev/docopt.js?label=Docopt.js)](https://github.com)
 [![node >= 12.16.0](https://img.shields.io/badge/node-%3E%3D%2012.16.0-brightgreen)](https://nodejs.org/)
 [![deno >= 0.33.0](https://img.shields.io/badge/deno-%3E%3D0.33.0-black)](https://deno.land/)
-<!-- [![on npm](https://img.shields.io/npm/dw/docopt.js)](https://npmjs.com/package/docopt.js) -->
+<!-- [![on npm](https://img.shields.io/npm/dw/docopt)](https://npmjs.com/package/docopt) -->
 
 This is the javascript port of [`docopt`](https://github.com/docopt/docopt),
 the awesome option parser written originally in python.
