@@ -22,7 +22,7 @@
   },
   "scripts": {
     "test": "node test/test.mjs",
-    "compileEsm": "tsc && mv dist/docopt.js dist/docopt.mjs",
+    "compileEsm": "tsc && mv dist/docopt.mjs dist/docopt.mjs",
     "compileCommon": "tsc -b tsconfig.commonjs.json && mv commonjs/docopt.js dist/docopt.cjs && rm -rf commonjs",
     "prepublish": "npm run compileCommon && npm run compileEsm"
   },

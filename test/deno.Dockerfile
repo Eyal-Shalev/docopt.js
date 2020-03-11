@@ -5,6 +5,6 @@ RUN apk add --update --no-cache python2
 ADD . /docopt.js
 WORKDIR /docopt.js
 
-RUN deno fetch dist/docopt.js
+RUN deno fetch dist/docopt.mjs
 ENTRYPOINT ["deno", "run", "--allow-run"]
 CMD ["test/test.mjs"]

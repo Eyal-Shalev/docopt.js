@@ -1,4 +1,4 @@
-import docopt from "../dist/docopt.js";
+import docopt from "../dist/docopt.mjs";
 
 const doc = `
 Example of program with many options using docopt.
