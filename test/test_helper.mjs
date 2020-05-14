@@ -20,7 +20,7 @@ export const exit = (code) => {
 export const run = (args) => {
   switch (true) {
     case isDeno:
-      return Deno.run({ args, cwd: Deno.cwd(), stdout: 'piped' })
+      return Deno.run({ cmd: args, cwd: Deno.cwd(), stdout: 'piped' })
         .output()
         .then(out => new TextDecoder().decode(out));
     case isNode:
