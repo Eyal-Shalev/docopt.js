@@ -1,6 +1,6 @@
 {
   "name": "@eyalsh/docopt",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "command line option parser, that will make you smile",
   "main": "dist/docopt.cjs",
   "directories": {
@@ -15,14 +15,14 @@
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^13.7.1",
-    "typescript": "^3.7.5"
+    "typescript": "^3.9.2"
   },
   "engines": {
     "node": ">=10.3.0"
   },
   "scripts": {
     "test": "node test/test.mjs",
-    "compileEsm": "tsc && mv dist/docopt.mjs dist/docopt.mjs",
+    "compileEsm": "tsc && mv dist/docopt.js dist/docopt.mjs",
     "compileCommon": "tsc -b tsconfig.commonjs.json && mv commonjs/docopt.js dist/docopt.cjs && rm -rf commonjs",
     "prepublish": "npm run compileCommon && npm run compileEsm"
   },

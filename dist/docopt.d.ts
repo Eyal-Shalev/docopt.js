@@ -1,4 +1,4 @@
-export declare const VERSION = "1.0.0";
+export declare const VERSION = "1.0.1";
 declare type Value = null | boolean | number | string | string[];
 export declare type DocOptions = {
     [k: string]: Value;

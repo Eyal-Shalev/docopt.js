@@ -3,7 +3,8 @@
  * Copyright (c) 2020 Eyal Shalev <eyalsh@gmail.com>
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VERSION = '1.0.0';
+exports.VERSION = void 0;
+exports.VERSION = '1.0.1';
 const defaultParams = Object.freeze({ help: true, optionsFirst: false });
 const docopt = (doc, init = {}) => {
     const params = { ...defaultParams, ...init };
@@ -87,9 +88,8 @@ const formalUsage = (printableUsage) => {
     return `( ${ret.join(' ')} )`;
 };
 const parseLong = (tokens, options) => {
-    var _a;
     let long, eq, value;
-    [long, eq, value] = stringPartition(((_a = tokens) === null || _a === void 0 ? void 0 : _a.move()) || '', '=');
+    [long, eq, value] = stringPartition((tokens === null || tokens === void 0 ? void 0 : tokens.move()) || '', '=');
     if (!long.startsWith('--')) {
         throw new Error('Invalid runtime state');
     }
@@ -134,12 +134,11 @@ const parseLong = (tokens, options) => {
     return [o];
 };
 const parseShorts = (tokens, options) => {
-    var _a;
     const token = tokens.move();
     if (!token || !token.startsWith('-') || token.startsWith('--')) {
         throw new Error('Invalid runtime state');
     }
-    let left = (_a = token) === null || _a === void 0 ? void 0 : _a.substring(1);
+    let left = token === null || token === void 0 ? void 0 : token.substring(1);
     const parsed = [];
     while (left && left !== '') {
         let o;
@@ -215,7 +214,6 @@ const parseSeq = (tokens, options) => {
     return result;
 };
 const parseAtom = (tokens, options) => {
-    var _a, _b, _c, _d;
     const token = tokens.current();
     let matching;
     let pattern;
@@ -239,13 +237,13 @@ const parseAtom = (tokens, options) => {
         tokens.move();
         return [new AnyOptions()];
     }
-    else if (((_a = token) === null || _a === void 0 ? void 0 : _a.startsWith('--')) && token !== '--') {
+    else if ((token === null || token === void 0 ? void 0 : token.startsWith('--')) && token !== '--') {
         return parseLong(tokens, options);
     }
-    else if (((_b = token) === null || _b === void 0 ? void 0 : _b.startsWith('-')) && !['-', '--'].includes(token)) {
+    else if ((token === null || token === void 0 ? void 0 : token.startsWith('-')) && !['-', '--'].includes(token)) {
         return parseShorts(tokens, options);
     }
-    else if (((_c = token) === null || _c === void 0 ? void 0 : _c.startsWith('<')) && (token.endsWith('>')) || (((_d = token) === null || _d === void 0 ? void 0 : _d.toUpperCase()) === token && (token.match(/[A-Z]/)))) {
+    else if ((token === null || token === void 0 ? void 0 : token.startsWith('<')) && (token.endsWith('>')) || ((token === null || token === void 0 ? void 0 : token.toUpperCase()) === token && (token.match(/[A-Z]/)))) {
         return [new Argument(tokens.move())];
     }
     else {
@@ -319,8 +317,7 @@ class Pattern {
     }
     fixRepeatingArguments() {
         this.either().children.map(c => c.children).forEach(case_ => {
-            var _a;
-            (_a = case_) === null || _a === void 0 ? void 0 : _a.filter(c => c instanceof ChildPattern && case_.filter(x => c.equalTo(x)).length > 1).forEach(e => {
+            case_ === null || case_ === void 0 ? void 0 : case_.filter(c => c instanceof ChildPattern && case_.filter(x => c.equalTo(x)).length > 1).forEach(e => {
                 if (e instanceof Argument || (e instanceof Option && e.argCount > 0)) {
                     if (!e.value) {
                         e.value = [];
@@ -623,11 +620,13 @@ const stringPartition = (source, expr) => {
     }
     return [source.substring(0, i), expr, source.substring(i + expr.length)];
 };
-// @ts-ignore
+// @ts-ignore TS2580
 const processArgv = () => (typeof Deno !== 'undefined' && Deno.args) || (typeof process !== 'undefined' && process.argv.slice(2)) || [];
 function flatten(arr, depth = 1) {
-    var _a;
-    return ((_a = Array.prototype.flat) === null || _a === void 0 ? void 0 : _a.apply(arr, [depth])) || (depth === 0 ? arr : flatten([].concat(...arr), depth - 1));
+    if (Array.prototype.flat) {
+        return Array.prototype.flat.apply(arr, [depth]);
+    }
+    return depth === 0 ? arr : flatten([].concat(...arr), depth - 1);
 }
 const objectFromEntries = Object.fromEntries || ((entries) => {
     if (entries === null || entries === undefined) {

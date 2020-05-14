@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-deno run ./test/testee.mjs "$@" <&0 >&1 2>&2
+deno run ./test/testee.ts "$@" <&0 >&1 2>&2

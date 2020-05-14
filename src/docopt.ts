@@ -2,7 +2,7 @@
  * Copyright (c) 2020 Eyal Shalev <eyalsh@gmail.com>
  */
 
-export const VERSION = '1.0.0';
+export const VERSION = '1.0.1';
 
 type Constructor<T> = { new(...args: any[]): T }
 type Value = null | boolean | number | string | string[]
@@ -669,13 +669,14 @@ const stringPartition = (source: string, expr: string): [string, string, string]
 };
 
 declare var Deno: any;
-// @ts-ignore
+// @ts-ignore TS2580
 const processArgv = (): string[] => (typeof Deno !== 'undefined' && Deno.args) || (typeof process !== 'undefined' && process.argv.slice(2)) || [];
 
 function flatten<T>(arr: any[], depth: number = 1): T[] {
-  return Array.prototype.flat?.apply(arr, [depth]) || (
-    depth === 0 ? arr : flatten([].concat(...arr), depth - 1)
-  );
+  if (Array.prototype.flat) {
+    return Array.prototype.flat.apply(arr, [depth]) as T[]
+  }
+  return depth === 0 ? arr : flatten([].concat(...arr), depth - 1);
 }
 
 type Dictionary<T> = { [k in PropertyKey]: T }
