@@ -4,7 +4,7 @@
 
 const {execSync} = require('child_process');
 
-const result = execSync(['python', 'test/language_agnostic_tester.py', 'test/testee_commonjs.sh'].join(' ')).toString('utf-8');
+const result = execSync(['python', 'test/language_agnostic_tester.py', 'test/commonjs_testee.sh'].join(' ')).toString('utf-8');
 
 const handleErr = e => {
     console.error(e);

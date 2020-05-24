@@ -1,4 +1,4 @@
-import {getDoc} from './test_helper.mjs'
+import {getDoc} from './deno_helper.ts'
 import docopt from "../src/docopt.ts";
 
 getDoc()

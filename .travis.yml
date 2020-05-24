@@ -2,8 +2,10 @@ language: minimal
 services:
   - docker
 install:
-  - docker build -t nodejs-test -f test/nodejs.Dockerfile .
   - docker build -t deno-test -f test/deno.Dockerfile .
+  - docker build -t nodejs-test -f test/nodejs.Dockerfile .
+  - docker build -t commonjs-test -f test/commonjs.Dockerfile .
 script:
   - docker run deno-test
   - docker run nodejs-test
+  - docker run commonjs-test

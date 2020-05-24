@@ -15,16 +15,15 @@
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^13.7.1",
-    "typescript": "^3.9.2"
+    "typescript": "^3.9.3",
+    "typescript-deno-plugin": "^1.29.0"
   },
   "engines": {
     "node": ">=10.3.0"
   },
   "scripts": {
     "test": "node test/test.mjs",
-    "compileEsm": "tsc && mv dist/docopt.js dist/docopt.mjs",
-    "compileCommon": "tsc -b tsconfig.commonjs.json && mv commonjs/docopt.js dist/docopt.cjs && rm -rf commonjs",
-    "prepare": "npm run compileCommon && npm run compileEsm"
+    "prepare": "deno run -A --unstable ./scripts/build.ts"
   },
   "repository": {
     "type": "git",
