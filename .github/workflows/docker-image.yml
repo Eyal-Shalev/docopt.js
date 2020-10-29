@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  deno-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup repo
+      uses: actions/checkout@v2
+    - name: Build the deno test image
+      run: docker build . --file test/deno.Dockerfile --tag deno-test
+    - name: Run the deno tests
+      run: docker run deno-test
+
+  node-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup repo
+      uses: actions/checkout@v2
+    - name: Build the commonjs test image
+      run: docker build . --file test/commonjs.Dockerfile --tag commonjs-test
+    - name: Run the Node tests
+      run: docker run commonjs-test
