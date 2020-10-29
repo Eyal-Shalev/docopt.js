@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "",
   "dependencies": {
-    "docopt": ".."
+    "@eyalsh/docopt": ".."
   },
   "main": "index.js",
   "scripts": {},

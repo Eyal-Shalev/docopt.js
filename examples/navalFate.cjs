@@ -20,8 +20,7 @@ Options:
 
 `;
 try {
-    console.log(JSON.stringify(docopt(doc), null, '\t'));
-}
-catch (e) {
-    console.error(e.message);
+  console.log(JSON.stringify(docopt(doc), null, '\t'));
+} catch (e) {
+  console.error(e.message);
 }

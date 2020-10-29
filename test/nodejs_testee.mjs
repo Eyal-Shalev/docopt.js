@@ -1,5 +1,5 @@
 import {getDoc} from './test_helper.mjs'
-import docopt from "../dist/docopt.mjs";
+import docopt from "../mod.ts";
 
 getDoc()
   .then(doc => {

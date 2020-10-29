@@ -1,30 +1,7 @@
 {
+  "extends": "@tsconfig/deno/tsconfig.json",
   "compilerOptions": {
-    "target": "ES2019",
-    "module": "ESNext",
-    "declaration": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "removeComments": false,
-    "strict": true,
-    "noImplicitAny": true,
-    "alwaysStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "plugins": [
-      {
-        "name": "typescript-deno-plugin",
-        "enable": true,
-        "importmap": "import_map.json"
-      }
-    ]
+    "target": "ESNext"
   },
-  "compileOnSave": true,
-  "files": [
-    "./src/docopt.ts"
-  ]
+  "include": ["./src"]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@eyalsh/docopt",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "command line option parser, that will make you smile",
   "main": "dist/docopt.cjs",
   "directories": {
@@ -14,8 +14,13 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^13.7.1",
-    "typescript": "^3.9.3",
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@tsconfig/deno": "^1.0.5",
+    "@types/node": "^13.13.30",
+    "typescript": "^3.9.7",
     "typescript-deno-plugin": "^1.29.0"
   },
   "engines": {
@@ -23,7 +28,9 @@
   },
   "scripts": {
     "test": "node test/test.mjs",
-    "prepare": "deno run -A --unstable ./scripts/build.ts"
+    "deno-bundle": "deno bundle src/docopt.ts dist/docopt.mjs",
+    "babel": "babel dist/docopt.mjs -o dist/docopt.cjs",
+    "prepare": "npm run deno-bundle && npm run babel"
   },
   "repository": {
     "type": "git",
@@ -39,5 +46,13 @@
   "bugs": {
     "url": "https://github.com/Eyal-Shalev/docopt.js/issues"
   },
-  "homepage": "https://github.com/Eyal-Shalev/docopt.js#readme"
+  "homepage": "https://github.com/Eyal-Shalev/docopt.js#readme",
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties"
+    ]
+  }
 }
