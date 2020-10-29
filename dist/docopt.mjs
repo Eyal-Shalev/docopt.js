@@ -689,7 +689,7 @@ const parseAtom = (tokens, options)=>{
         ];
     }
 };
-export const VERSION = "1.0.1";
+export const VERSION = "1.0.4";
 const defaultParams = Object.freeze({
     help: true,
     optionsFirst: false
