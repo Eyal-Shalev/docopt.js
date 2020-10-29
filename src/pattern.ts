@@ -1,10 +1,8 @@
-import {flatten} from "./pollyfill.ts";
-import {Constructor, stringPartition, uniqueMap, Value} from "./utils.ts";
+import { Constructor, stringPartition, uniqueMap, Value } from "./utils.ts";
 
 type MatchResult = [boolean, Pattern[], ChildPattern[]];
 
 export abstract class Pattern {
-
   children?: Pattern[];
 
   toString(): string {
@@ -31,7 +29,7 @@ export abstract class Pattern {
         const c = this.children[i];
         if (!c.children) {
           if (!(uniq.has(c.toString()))) {
-            throw new Error('Invalid runtime state');
+            throw new Error("Invalid runtime state");
           }
           this.children = this.children || [];
           this.children[i] = uniq.get(c.toString()) as Pattern;
@@ -44,12 +42,15 @@ export abstract class Pattern {
   }
 
   fixRepeatingArguments(): this {
-    this.either().children.map(c => c.children).forEach(case_ => {
-      case_?.filter(c => c instanceof ChildPattern && case_.filter(x => c.equalTo(x)).length > 1).forEach(e => {
+    this.either().children.map((c) => c.children).forEach((case_) => {
+      case_?.filter((c) =>
+        c instanceof ChildPattern &&
+        case_.filter((x) => c.equalTo(x)).length > 1
+      ).forEach((e) => {
         if (e instanceof Argument || (e instanceof Option && e.argCount > 0)) {
           if (!e.value) {
             e.value = [];
-          } else if (typeof e.value === 'string') {
+          } else if (typeof e.value === "string") {
             e.value = e.value.split(/\s+/g);
           }
         }
@@ -67,45 +68,46 @@ export abstract class Pattern {
     const groups: Pattern[][] = [[this]];
     while (groups.length > 0) {
       const children = groups.shift() as Pattern[];
-      const types = children.map(child => child.constructor);
+      const types = children.map((child) => child.constructor);
       if (types.includes(Either)) {
-        const i = children.findIndex(child => child instanceof Either);
+        const i = children.findIndex((child) => child instanceof Either);
         const either = children[i] as Either;
         children.splice(i, 1);
         for (let c of either.children) {
           groups.push([c, ...children]);
         }
       } else if (types.includes(Required)) {
-        const i = children.findIndex(child => child instanceof Required);
+        const i = children.findIndex((child) => child instanceof Required);
         const required = children[i] as Required;
         children.splice(i, 1);
         groups.push(required.children.concat(children));
       } else if (types.includes(Optional)) {
-        const i = children.findIndex(child => child instanceof Optional);
+        const i = children.findIndex((child) => child instanceof Optional);
         const optional = children[i] as Optional;
         children.splice(i, 1);
         groups.push(optional.children.concat(children));
       } else if (types.includes(AnyOptions)) {
-        const i = children.findIndex(child => child instanceof AnyOptions);
+        const i = children.findIndex((child) => child instanceof AnyOptions);
         const anyOptions = children[i] as AnyOptions;
         children.splice(i, 1);
         groups.push(anyOptions.children.concat(children));
       } else if (types.includes(OneOrMore)) {
-        const i = children.findIndex(child => child instanceof OneOrMore);
+        const i = children.findIndex((child) => child instanceof OneOrMore);
         const oneOrMore = children[i] as OneOrMore;
         children.splice(i, 1);
-        groups.push([...oneOrMore.children, ...oneOrMore.children, ...children]);
+        groups.push(
+          [...oneOrMore.children, ...oneOrMore.children, ...children],
+        );
       } else {
         ret.push(children);
       }
     }
-    const args = ret.map(e => new Required(...e));
+    const args = ret.map((e) => new Required(...e));
     return new Either(...args);
   }
 }
 
 export abstract class ChildPattern extends Pattern {
-
   public children: undefined;
 
   constructor(public name: string | null, public value: Value = null) {
@@ -113,15 +115,22 @@ export abstract class ChildPattern extends Pattern {
   }
 
   equalTo(other: any): boolean {
-    return other === this || (other.constructor === this.constructor && this.name === other.name && this.value === other.value);
+    return other === this ||
+      (other.constructor === this.constructor && this.name === other.name &&
+        this.value === other.value);
   }
 
   toString(): string {
-    return `${this.constructor.name}(${this.name}, ${this.value === null ? '' : this.value})`;
+    return `${this.constructor.name}(${this.name}, ${
+      this.value === null ? "" : this.value
+    })`;
   }
 
   flat(...types: Constructor<Pattern>[]): Pattern[] {
-    if (types.length === 0 || types.includes(this.constructor as Constructor<Pattern>)) {
+    if (
+      types.length === 0 ||
+      types.includes(this.constructor as Constructor<Pattern>)
+    ) {
       return [this];
     }
     return [];
@@ -135,13 +144,17 @@ export abstract class ChildPattern extends Pattern {
       return [false, left, collected];
     }
     left = [...left.slice(0, pos), ...left.slice(pos + 1)];
-    const sameName = collected.filter(a => a instanceof ChildPattern && a.name === this.name) as ChildPattern[];
-    if (this.value instanceof Array || typeof this.value === 'number') {
+    const sameName = collected.filter((a) =>
+      a instanceof ChildPattern && a.name === this.name
+    ) as ChildPattern[];
+    if (this.value instanceof Array || typeof this.value === "number") {
       let increment;
-      if (typeof this.value === 'number') {
+      if (typeof this.value === "number") {
         increment = 1;
       } else {
-        increment = (typeof match.value === 'string') ? [match.value] : match.value;
+        increment = (typeof match.value === "string")
+          ? [match.value]
+          : match.value;
       }
       if (sameName.length === 0) {
         match.value = increment;
@@ -149,10 +162,13 @@ export abstract class ChildPattern extends Pattern {
       }
       if (increment instanceof Array && sameName[0].value instanceof Array) {
         sameName[0].value.push(...increment);
-      } else if (!!increment && typeof sameName[0].value === 'number' && typeof increment === 'number') {
+      } else if (
+        !!increment && typeof sameName[0].value === "number" &&
+        typeof increment === "number"
+      ) {
         sameName[0].value += increment;
       } else {
-        throw new Error('Invalid runtime state');
+        throw new Error("Invalid runtime state");
       }
       return [true, left, collected];
     }
@@ -161,11 +177,15 @@ export abstract class ChildPattern extends Pattern {
 }
 
 export class Option extends ChildPattern {
-
-  constructor(public short: string | null, public long: string | null, public argCount: number = 0, value: Value = false) {
+  constructor(
+    public short: string | null,
+    public long: string | null,
+    public argCount: number = 0,
+    value: Value = false,
+  ) {
     super((long || short), value);
     if (![0, 1].includes(argCount)) {
-      throw new Error('Invalid runtime state');
+      throw new Error("Invalid runtime state");
     }
     if (value === false && argCount > 0) {
       this.value = null;
@@ -173,7 +193,9 @@ export class Option extends ChildPattern {
   }
 
   toString(): string {
-    return `Option(${this.short || ''}, ${this.long || ''}, ${this.argCount}, ${this.value !== null ? this.value : ''})`;
+    return `Option(${this.short || ""}, ${this.long || ""}, ${this.argCount}, ${
+      this.value !== null ? this.value : ""
+    })`;
   }
 
   static parse(optionDescription: string): Option {
@@ -181,12 +203,15 @@ export class Option extends ChildPattern {
     let long = null;
     let argCount = 0;
     let value: string | false = false;
-    let [options, , description] = stringPartition(optionDescription.trim(), '  ');
-    options = options.replace(/,/g, ' ').replace(/=/g, ' ');
+    let [options, , description] = stringPartition(
+      optionDescription.trim(),
+      "  ",
+    );
+    options = options.replace(/,/g, " ").replace(/=/g, " ");
     for (let s of options.split(/\s+/g)) {
-      if (s.startsWith('--')) {
+      if (s.startsWith("--")) {
         long = s;
-      } else if (s.startsWith('-')) {
+      } else if (s.startsWith("-")) {
         short = s;
       } else {
         argCount = 1;
@@ -213,7 +238,6 @@ export class Option extends ChildPattern {
 }
 
 export class Argument extends ChildPattern {
-
   singleMatch(left: Pattern[]): ([number, Argument] | [-1, null]) {
     for (let i = 0; i < left.length; i++) {
       const p = left[i];
@@ -232,7 +256,6 @@ export class Argument extends ChildPattern {
 }
 
 export class Command extends Argument {
-
   constructor(public name: string, value: boolean = false) {
     super(name, value);
   }
@@ -253,7 +276,6 @@ export class Command extends Argument {
 }
 
 export abstract class ParentPattern extends Pattern {
-
   public children: Pattern[] = [];
 
   constructor(...children: Pattern[]) {
@@ -265,17 +287,18 @@ export abstract class ParentPattern extends Pattern {
     if (types.includes(this.constructor as Constructor<T>)) {
       return [this as any as T];
     } else {
-      return flatten(this.children.map((c: Pattern) => c.flat(...types)));
+      return this.children.map((c: Pattern) => c.flat(...types)).flat() as T[];
     }
   }
 
   toString(): string {
-    return `${this.constructor.name}(${this.children.map(c => c.toString()).join(', ')})`;
+    return `${this.constructor.name}(${
+      this.children.map((c) => c.toString()).join(", ")
+    })`;
   }
 }
 
 export class Required extends ParentPattern {
-
   match(left: Pattern[], collected: ChildPattern[] = []): MatchResult {
     let l = left;
     let [c, matched] = [collected, false];
@@ -290,7 +313,6 @@ export class Required extends ParentPattern {
 }
 
 export class Optional extends ParentPattern {
-
   match(left: Pattern[], collected: ChildPattern[] = []): MatchResult {
     for (const p of this.children) {
       [, left, collected] = p.match(left, collected);
@@ -303,10 +325,9 @@ export class AnyOptions extends Optional {
 }
 
 export class OneOrMore extends ParentPattern {
-
   match(left: Pattern[], collected: ChildPattern[] = []): MatchResult {
     if (this.children.length !== 1) {
-      throw new Error('Invalid runtime state');
+      throw new Error("Invalid runtime state");
     }
     let [l, c, matched, times] = [left, collected, true, 0];
     let l_ = null;
@@ -327,7 +348,6 @@ export class OneOrMore extends ParentPattern {
 }
 
 export class Either extends ParentPattern {
-
   match(left: Pattern[], collected: ChildPattern[] = []): MatchResult {
     const outcomes: MatchResult[] = [];
     for (const p of this.children) {
@@ -336,7 +356,8 @@ export class Either extends ParentPattern {
         outcomes.push(found);
       }
     }
-    const outcomeSize = (outcome: MatchResult) => outcome[1] === null ? 0 : outcome[1].length;
+    const outcomeSize = (outcome: MatchResult) =>
+      outcome[1] === null ? 0 : outcome[1].length;
     if (outcomes.length > 0) {
       return outcomes.sort((a, b) => outcomeSize(a) - outcomeSize(b))[0];
     }

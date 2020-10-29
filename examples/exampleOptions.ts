@@ -1,4 +1,4 @@
-import docopt from "../dist/docopt.mjs";
+import docopt from "../mod.ts";
 
 const doc = `
 Example of program with many options using docopt.
@@ -36,8 +36,7 @@ Options:
 
 `;
 try {
-    console.log(JSON.stringify(docopt(doc), null, '\t'));
-}
-catch (e) {
-    console.error(e.message);
+  console.log(JSON.stringify(docopt(doc), null, '\t'));
+} catch (e) {
+  console.error(e.message);
 }

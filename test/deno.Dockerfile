@@ -1,10 +1,10 @@
-FROM hayd/alpine-deno:1.0.0
+FROM hayd/alpine-deno:1.5.0
 
 RUN apk add --update --no-cache python2
 
-ADD . /docopt.js
+COPY . /docopt.js
 WORKDIR /docopt.js
 
-RUN deno cache src/docopt.ts
+RUN deno cache test/deno_testee.ts
 ENTRYPOINT ["deno", "run", "--allow-run", "--allow-read=."]
-CMD ["test/test.mjs"]
+CMD ["test/deno_test.ts"]

@@ -1,7 +1,8 @@
-import {getDoc} from './deno_helper.ts'
-import docopt from "../src/docopt.ts";
+import docopt from "../mod.ts";
 
-getDoc()
+Deno
+  .readAll(Deno.stdin)
+  .then((out: Uint8Array) => new TextDecoder().decode(out))
   .then((doc:string) => {
     console.log(JSON.stringify(docopt(doc)))
   })

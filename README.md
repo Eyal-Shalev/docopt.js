@@ -20,9 +20,9 @@ write only the help message--*the way you want it*.
 
 ## Example: Naval Fate
 
-### ECMA Modules
-```javascript
-import docopt from "./dist/docopt.mjs";
+### Deno
+```typescript
+import docopt from "https://deno.land/x/docopt@v1.0.2/mod.ts";
 const doc = `
 Naval Fate.
 
@@ -50,7 +50,7 @@ catch (e) {
 }
 ```
 
-### CommonJS modules
+### Node modules
 ```javascript
 const docopt = require('@eyalsh/docopt').default;
 
@@ -90,13 +90,10 @@ options, arguments and commands based on that. The basic idea is that
 
 ## Installation
 
-### ECMA
-Docopt is available via JavaScript import:
+### Deno
+Docopt is available via Typescript import:
 
-    import docopt from "https://raw.githubusercontent.com/docopt/docopt.js/master/dist/docopt.mjs"
-
-Alternatively, you can just drop `dist/docopt.mjs` file into your project - it is self-contained.
-[Get source on github](http://github.com/eyal-shalev/docopt.js).
+    import docopt from "https://deno.land/x/docopt@v1.0.2/mod.ts";
 
 ### NPM
 Docopt is available via npm:
