@@ -9,7 +9,7 @@ import { AnyOptions, ChildPattern, Option } from "./pattern.ts";
 import { TokenStream } from "./token.ts";
 import { parseArgv, parseDefaults, parsePattern } from "./parse.ts";
 
-export const VERSION = "1.0.4";
+export const VERSION = "1.0.5";
 
 export type DocOptions = { [k: string]: Value };
 

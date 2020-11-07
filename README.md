@@ -22,7 +22,7 @@ write only the help message--*the way you want it*.
 
 ### Deno
 ```typescript
-import docopt from "https://deno.land/x/docopt@v1.0.2/mod.ts";
+import docopt from "https://deno.land/x/docopt@v1.0.5/mod.ts";
 const doc = `
 Naval Fate.
 
@@ -93,7 +93,7 @@ options, arguments and commands based on that. The basic idea is that
 ### Deno
 Docopt is available via Typescript import:
 
-    import docopt from "https://deno.land/x/docopt@v1.0.2/mod.ts";
+    import docopt from "https://deno.land/x/docopt@v1.0.5/mod.ts";
 
 ### NPM
 Docopt is available via npm:

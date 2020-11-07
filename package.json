@@ -1,6 +1,6 @@
 {
   "name": "@eyalsh/docopt",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "command line option parser, that will make you smile",
   "main": "dist/docopt.cjs",
   "directories": {
