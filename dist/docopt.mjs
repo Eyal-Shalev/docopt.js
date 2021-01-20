@@ -1,5 +1,45 @@
 const processArgv = ()=>typeof Deno !== "undefined" && Deno.args || typeof process !== "undefined" && process.argv.slice(2) || []
 ;
+class TokenStream extends Array {
+    constructor(source1 = [], error = Exit1){
+        super();
+        this.error = error;
+        if (typeof source1 === "string") {
+            source1 = source1.trim().split(/\s+/g);
+        }
+        if (typeof source1 === "number") {
+            source1 = new Array(source1);
+        }
+        this.push(...source1);
+    }
+    move() {
+        return this.shift() || null;
+    }
+    next() {
+        this.shift();
+        return this;
+    }
+    current() {
+        return this.length > 0 ? this[0] : null;
+    }
+}
+export const VERSION = "1.0.5";
+const defaultParams = Object.freeze({
+    help: true,
+    optionsFirst: false
+});
+const formalUsage = (printableUsage)=>{
+    const pu = printableUsage.split(/\s+/g).slice(1);
+    const ret = [];
+    for (let s of pu.slice(1)){
+        if (s === pu[0]) {
+            ret.push(") | (");
+        } else {
+            ret.push(s);
+        }
+    }
+    return `( ${ret.join(" ")} )`;
+};
 class DocoptLanguageError extends Error {
 }
 class Exit extends Error {
@@ -27,44 +67,47 @@ const eachSlice = (orig, size)=>{
     }
     return arr;
 };
-const stringPartition = (source, expr)=>{
-    const i = source.indexOf(expr);
+const stringPartition = (source1, expr)=>{
+    const i = source1.indexOf(expr);
     if (i < 0) {
         return [
-            source,
+            source1,
             "",
             ""
         ];
     }
     return [
-        source.substring(0, i),
+        source1.substring(0, i),
         expr,
-        source.substring(i + expr.length)
+        source1.substring(i + expr.length)
     ];
 };
-class TokenStream extends Array {
-    constructor(source1 = [], error = Exit){
-        super();
-        this.error = error;
-        if (typeof source1 === "string") {
-            source1 = source1.trim().split(/\s+/g);
-        }
-        if (typeof source1 === "number") {
-            source1 = new Array(source1);
-        }
-        this.push(...source1);
+const Exit1 = Exit;
+const extras = (help, version, options, doc)=>{
+    if (help && options.filter((o)=>[
+            "-h",
+            "--help"
+        ].includes(o.name)
+    ).length > 0) {
+        Exit.usage = undefined;
+        throw new Exit(doc.trim());
     }
-    move() {
-        return this.shift() || null;
+    if (version && options.filter((o)=>o.name === "--version" && o.value
+    ).length > 0) {
+        Exit.usage = undefined;
+        throw new Exit(version);
     }
-    next() {
-        this.shift();
-        return this;
+};
+const printableUsage = (doc)=>{
+    const usageSplit = doc.split(/([Uu][Ss][Aa][Gg][Ee]:)/);
+    if (usageSplit.length < 3) {
+        throw new DocoptLanguageError('"usage:" (case-insensitive) not found.');
     }
-    current() {
-        return this.length > 0 ? this[0] : null;
+    if (usageSplit.length > 3) {
+        throw new DocoptLanguageError('More than one "usage:" (case-insensitive).');
     }
-}
+    return usageSplit.slice(1).join("").split(/\n\s*\n/)[0].trim();
+};
 class Pattern {
     toString() {
         return `${this.constructor.name}()`;
@@ -149,8 +192,8 @@ class Pattern {
                 const optional = children[i];
                 children.splice(i, 1);
                 groups.push(optional.children.concat(children));
-            } else if (types.includes(AnyOptions)) {
-                const i = children.findIndex((child)=>child instanceof AnyOptions
+            } else if (types.includes(AnyOptions1)) {
+                const i = children.findIndex((child)=>child instanceof AnyOptions1
                 );
                 const anyOptions = children[i];
                 children.splice(i, 1);
@@ -278,7 +321,7 @@ class Option1 extends ChildPattern {
         let value2 = false;
         let [options, , description] = stringPartition(optionDescription.trim(), "  ");
         options = options.replace(/,/g, " ").replace(/=/g, " ");
-        for (let s of options.split(/\s+/g)){
+        for (let s of options.trim().split(/\s+/g)){
             if (s.startsWith("--")) {
                 long1 = s;
             } else if (s.startsWith("-")) {
@@ -415,7 +458,7 @@ class Optional extends ParentPattern {
         ];
     }
 }
-class AnyOptions extends Optional {
+class AnyOptions1 extends Optional {
 }
 class OneOrMore extends ParentPattern {
     match(left, collected = []) {
@@ -670,7 +713,7 @@ const parseAtom = (tokens, options)=>{
     } else if (token === "options") {
         tokens.move();
         return [
-            new AnyOptions()
+            new AnyOptions1()
         ];
     } else if (token?.startsWith("--") && token !== "--") {
         return parseLong(tokens, options);
@@ -689,11 +732,6 @@ const parseAtom = (tokens, options)=>{
         ];
     }
 };
-export const VERSION = "1.0.4";
-const defaultParams = Object.freeze({
-    help: true,
-    optionsFirst: false
-});
 const docopt = (doc, init = {
 })=>{
     const params = {
@@ -705,13 +743,13 @@ const docopt = (doc, init = {
     const options = parseDefaults(doc);
     const pattern = parsePattern(formalUsage(Exit.usage || ""), options);
     const argv = parseArgv(new TokenStream(params.argv, Exit), options, params.optionsFirst);
-    const patternOptions = uniqueMap(pattern.flat(Option1));
-    pattern.flat(AnyOptions).forEach((ao)=>{
+    const patternOptions = uniqueMap(pattern.flat(Option2));
+    pattern.flat(AnyOptions2).forEach((ao)=>{
         const docOptions = parseDefaults(doc);
         ao.children = unique(docOptions.filter((o)=>!patternOptions.has(o.toString())
         ));
     });
-    extras(params.help, params.version, argv.filter((x)=>x instanceof Option1
+    extras(params.help, params.version, argv.filter((x)=>x instanceof Option2
     ), doc);
     let [matched, left, collected] = pattern.fix().match(argv);
     collected = collected || [];
@@ -725,40 +763,5 @@ const docopt = (doc, init = {
     throw new Exit();
 };
 export default docopt;
-const extras = (help, version, options, doc)=>{
-    if (help && options.filter((o)=>[
-            "-h",
-            "--help"
-        ].includes(o.name)
-    ).length > 0) {
-        Exit.usage = undefined;
-        throw new Exit(doc.trim());
-    }
-    if (version && options.filter((o)=>o.name === "--version" && o.value
-    ).length > 0) {
-        Exit.usage = undefined;
-        throw new Exit(version);
-    }
-};
-const printableUsage = (doc)=>{
-    const usageSplit = doc.split(/([Uu][Ss][Aa][Gg][Ee]:)/);
-    if (usageSplit.length < 3) {
-        throw new DocoptLanguageError('"usage:" (case-insensitive) not found.');
-    }
-    if (usageSplit.length > 3) {
-        throw new DocoptLanguageError('More than one "usage:" (case-insensitive).');
-    }
-    return usageSplit.slice(1).join("").split(/\n\s*\n/)[0].trim();
-};
-const formalUsage = (printableUsage1)=>{
-    const pu = printableUsage1.split(/\s+/g).slice(1);
-    const ret = [];
-    for (let s of pu.slice(1)){
-        if (s === pu[0]) {
-            ret.push(") | (");
-        } else {
-            ret.push(s);
-        }
-    }
-    return `( ${ret.join(" ")} )`;
-};
+const AnyOptions2 = AnyOptions1;
+const Option2 = Option1;

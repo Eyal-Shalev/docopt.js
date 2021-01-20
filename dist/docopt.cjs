@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -33,13 +35,11 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -65,15 +65,100 @@ var processArgv = function processArgv() {
   return typeof Deno !== "undefined" && Deno.args || typeof process !== "undefined" && process.argv.slice(2) || [];
 };
 
+var TokenStream = /*#__PURE__*/function (_Array) {
+  _inherits(TokenStream, _Array);
+
+  var _super = _createSuper(TokenStream);
+
+  function TokenStream() {
+    var _this2;
+
+    var _this;
+
+    var source1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var error = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Exit1;
+
+    _classCallCheck(this, TokenStream);
+
+    _this = _super.call(this);
+    _this.error = error;
+
+    if (typeof source1 === "string") {
+      source1 = source1.trim().split(/\s+/g);
+    }
+
+    if (typeof source1 === "number") {
+      source1 = new Array(source1);
+    }
+
+    (_this2 = _this).push.apply(_this2, _toConsumableArray(source1));
+
+    return _this;
+  }
+
+  _createClass(TokenStream, [{
+    key: "move",
+    value: function move() {
+      return this.shift() || null;
+    }
+  }, {
+    key: "next",
+    value: function next() {
+      this.shift();
+      return this;
+    }
+  }, {
+    key: "current",
+    value: function current() {
+      return this.length > 0 ? this[0] : null;
+    }
+  }]);
+
+  return TokenStream;
+}( /*#__PURE__*/_wrapNativeSuper(Array));
+
+var VERSION = "1.0.5";
+exports.VERSION = VERSION;
+var defaultParams = Object.freeze({
+  help: true,
+  optionsFirst: false
+});
+
+var formalUsage = function formalUsage(printableUsage) {
+  var pu = printableUsage.split(/\s+/g).slice(1);
+  var ret = [];
+
+  var _iterator = _createForOfIteratorHelper(pu.slice(1)),
+      _step;
+
+  try {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var s = _step.value;
+
+      if (s === pu[0]) {
+        ret.push(") | (");
+      } else {
+        ret.push(s);
+      }
+    }
+  } catch (err) {
+    _iterator.e(err);
+  } finally {
+    _iterator.f();
+  }
+
+  return "( ".concat(ret.join(" "), " )");
+};
+
 var DocoptLanguageError = /*#__PURE__*/function (_Error) {
   _inherits(DocoptLanguageError, _Error);
 
-  var _super = _createSuper(DocoptLanguageError);
+  var _super2 = _createSuper(DocoptLanguageError);
 
   function DocoptLanguageError() {
     _classCallCheck(this, DocoptLanguageError);
 
-    return _super.apply(this, arguments);
+    return _super2.apply(this, arguments);
   }
 
   return DocoptLanguageError;
@@ -82,18 +167,18 @@ var DocoptLanguageError = /*#__PURE__*/function (_Error) {
 var Exit = /*#__PURE__*/function (_Error2) {
   _inherits(Exit, _Error2);
 
-  var _super2 = _createSuper(Exit);
+  var _super3 = _createSuper(Exit);
 
   function Exit() {
-    var _this;
+    var _this3;
 
     var _message = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
 
     _classCallCheck(this, Exit);
 
-    _this = _super2.call(this);
-    _this._message = _message;
-    return _this;
+    _this3 = _super3.call(this);
+    _this3._message = _message;
+    return _this3;
   }
 
   _createClass(Exit, [{
@@ -128,67 +213,47 @@ var eachSlice = function eachSlice(orig, size) {
   return arr;
 };
 
-var stringPartition = function stringPartition(source, expr) {
-  var i = source.indexOf(expr);
+var stringPartition = function stringPartition(source1, expr) {
+  var i = source1.indexOf(expr);
 
   if (i < 0) {
-    return [source, "", ""];
+    return [source1, "", ""];
   }
 
-  return [source.substring(0, i), expr, source.substring(i + expr.length)];
+  return [source1.substring(0, i), expr, source1.substring(i + expr.length)];
 };
 
-var TokenStream = /*#__PURE__*/function (_Array) {
-  _inherits(TokenStream, _Array);
+var Exit1 = Exit;
 
-  var _super3 = _createSuper(TokenStream);
-
-  function TokenStream() {
-    var _this3;
-
-    var _this2;
-
-    var source1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    var error = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Exit;
-
-    _classCallCheck(this, TokenStream);
-
-    _this2 = _super3.call(this);
-    _this2.error = error;
-
-    if (typeof source1 === "string") {
-      source1 = source1.trim().split(/\s+/g);
-    }
-
-    if (typeof source1 === "number") {
-      source1 = new Array(source1);
-    }
-
-    (_this3 = _this2).push.apply(_this3, _toConsumableArray(source1));
-
-    return _this2;
+var extras = function extras(help, version, options, doc) {
+  if (help && options.filter(function (o) {
+    return ["-h", "--help"].includes(o.name);
+  }).length > 0) {
+    Exit.usage = undefined;
+    throw new Exit(doc.trim());
   }
 
-  _createClass(TokenStream, [{
-    key: "move",
-    value: function move() {
-      return this.shift() || null;
-    }
-  }, {
-    key: "next",
-    value: function next() {
-      this.shift();
-      return this;
-    }
-  }, {
-    key: "current",
-    value: function current() {
-      return this.length > 0 ? this[0] : null;
-    }
-  }]);
+  if (version && options.filter(function (o) {
+    return o.name === "--version" && o.value;
+  }).length > 0) {
+    Exit.usage = undefined;
+    throw new Exit(version);
+  }
+};
 
-  return TokenStream;
-}( /*#__PURE__*/_wrapNativeSuper(Array));
+var printableUsage = function printableUsage(doc) {
+  var usageSplit = doc.split(/([Uu][Ss][Aa][Gg][Ee]:)/);
+
+  if (usageSplit.length < 3) {
+    throw new DocoptLanguageError('"usage:" (case-insensitive) not found.');
+  }
+
+  if (usageSplit.length > 3) {
+    throw new DocoptLanguageError('More than one "usage:" (case-insensitive).');
+  }
+
+  return usageSplit.slice(1).join("").split(/\n\s*\n/)[0].trim();
+};
 
 var Pattern = /*#__PURE__*/function () {
   function Pattern() {
@@ -280,18 +345,18 @@ var Pattern = /*#__PURE__*/function () {
           var either = children[i];
           children.splice(i, 1);
 
-          var _iterator = _createForOfIteratorHelper(either.children),
-              _step;
+          var _iterator2 = _createForOfIteratorHelper(either.children),
+              _step2;
 
           try {
-            for (_iterator.s(); !(_step = _iterator.n()).done;) {
-              var c = _step.value;
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+              var c = _step2.value;
               groups.push([c].concat(_toConsumableArray(children)));
             }
           } catch (err) {
-            _iterator.e(err);
+            _iterator2.e(err);
           } finally {
-            _iterator.f();
+            _iterator2.f();
           }
         } else if (types.includes(Required)) {
           var _i = children.findIndex(function (child) {
@@ -309,9 +374,9 @@ var Pattern = /*#__PURE__*/function () {
           var optional = children[_i2];
           children.splice(_i2, 1);
           groups.push(optional.children.concat(children));
-        } else if (types.includes(AnyOptions)) {
+        } else if (types.includes(AnyOptions1)) {
           var _i3 = children.findIndex(function (child) {
-            return child instanceof AnyOptions;
+            return child instanceof AnyOptions1;
           });
 
           var anyOptions = children[_i3];
@@ -498,12 +563,12 @@ var Option1 = /*#__PURE__*/function (_ChildPattern) {
 
       options = options.replace(/,/g, " ").replace(/=/g, " ");
 
-      var _iterator2 = _createForOfIteratorHelper(options.split(/\s+/g)),
-          _step2;
+      var _iterator3 = _createForOfIteratorHelper(options.trim().split(/\s+/g)),
+          _step3;
 
       try {
-        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var s = _step2.value;
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var s = _step3.value;
 
           if (s.startsWith("--")) {
             long1 = s;
@@ -514,9 +579,9 @@ var Option1 = /*#__PURE__*/function (_ChildPattern) {
           }
         }
       } catch (err) {
-        _iterator2.e(err);
+        _iterator3.e(err);
       } finally {
-        _iterator2.f();
+        _iterator3.f();
       }
 
       if (argCount1 > 0) {
@@ -679,12 +744,12 @@ var Required = /*#__PURE__*/function (_ParentPattern) {
       var c = collected,
           matched = false;
 
-      var _iterator3 = _createForOfIteratorHelper(this.children),
-          _step3;
+      var _iterator4 = _createForOfIteratorHelper(this.children),
+          _step4;
 
       try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var p = _step3.value;
+        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+          var p = _step4.value;
 
           var _p$match = p.match(l, c);
 
@@ -699,9 +764,9 @@ var Required = /*#__PURE__*/function (_ParentPattern) {
           }
         }
       } catch (err) {
-        _iterator3.e(err);
+        _iterator4.e(err);
       } finally {
-        _iterator3.f();
+        _iterator4.f();
       }
 
       return [true, l, c];
@@ -727,12 +792,12 @@ var Optional = /*#__PURE__*/function (_ParentPattern2) {
     value: function match(left) {
       var collected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
-      var _iterator4 = _createForOfIteratorHelper(this.children),
-          _step4;
+      var _iterator5 = _createForOfIteratorHelper(this.children),
+          _step5;
 
       try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var p = _step4.value;
+        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+          var p = _step5.value;
 
           var _p$match3 = p.match(left, collected);
 
@@ -742,9 +807,9 @@ var Optional = /*#__PURE__*/function (_ParentPattern2) {
           collected = _p$match4[2];
         }
       } catch (err) {
-        _iterator4.e(err);
+        _iterator5.e(err);
       } finally {
-        _iterator4.f();
+        _iterator5.f();
       }
 
       return [true, left, collected];
@@ -754,18 +819,18 @@ var Optional = /*#__PURE__*/function (_ParentPattern2) {
   return Optional;
 }(ParentPattern);
 
-var AnyOptions = /*#__PURE__*/function (_Optional) {
-  _inherits(AnyOptions, _Optional);
+var AnyOptions1 = /*#__PURE__*/function (_Optional) {
+  _inherits(AnyOptions1, _Optional);
 
-  var _super11 = _createSuper(AnyOptions);
+  var _super11 = _createSuper(AnyOptions1);
 
-  function AnyOptions() {
-    _classCallCheck(this, AnyOptions);
+  function AnyOptions1() {
+    _classCallCheck(this, AnyOptions1);
 
     return _super11.apply(this, arguments);
   }
 
-  return AnyOptions;
+  return AnyOptions1;
 }(Optional);
 
 var OneOrMore = /*#__PURE__*/function (_ParentPattern3) {
@@ -839,12 +904,12 @@ var Either = /*#__PURE__*/function (_ParentPattern4) {
       var collected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
       var outcomes = [];
 
-      var _iterator5 = _createForOfIteratorHelper(this.children),
-          _step5;
+      var _iterator6 = _createForOfIteratorHelper(this.children),
+          _step6;
 
       try {
-        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-          var p = _step5.value;
+        for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+          var p = _step6.value;
           var found = p.match(left, collected);
 
           if (found[0]) {
@@ -852,9 +917,9 @@ var Either = /*#__PURE__*/function (_ParentPattern4) {
           }
         }
       } catch (err) {
-        _iterator5.e(err);
+        _iterator6.e(err);
       } finally {
-        _iterator5.f();
+        _iterator6.f();
       }
 
       var outcomeSize = function outcomeSize(outcome) {
@@ -885,9 +950,9 @@ var parseArgv = function parseArgv(tokens, options) {
       return parsed.concat(tokens.next().map(function (v) {
         return new Argument(null, v);
       }));
-    } else if ((_tokens$current = tokens.current()) === null || _tokens$current === void 0 ? void 0 : _tokens$current.startsWith("--")) {
+    } else if ((_tokens$current = tokens.current()) !== null && _tokens$current !== void 0 && _tokens$current.startsWith("--")) {
       parsed.push.apply(parsed, _toConsumableArray(parseLong(tokens, options)));
-    } else if (((_tokens$current2 = tokens.current()) === null || _tokens$current2 === void 0 ? void 0 : _tokens$current2.startsWith("-")) && tokens.current() !== "-") {
+    } else if ((_tokens$current2 = tokens.current()) !== null && _tokens$current2 !== void 0 && _tokens$current2.startsWith("-") && tokens.current() !== "-") {
       parsed.push.apply(parsed, _toConsumableArray(parseShorts(tokens, options)));
     } else if (optionsFirst) {
       return parsed.concat(tokens.map(function (v) {
@@ -1120,24 +1185,17 @@ var parseAtom = function parseAtom(tokens, options) {
     return [result];
   } else if (token === "options") {
     tokens.move();
-    return [new AnyOptions()];
-  } else if ((token === null || token === void 0 ? void 0 : token.startsWith("--")) && token !== "--") {
+    return [new AnyOptions1()];
+  } else if (token !== null && token !== void 0 && token.startsWith("--") && token !== "--") {
     return parseLong(tokens, options);
-  } else if ((token === null || token === void 0 ? void 0 : token.startsWith("-")) && !["-", "--"].includes(token)) {
+  } else if (token !== null && token !== void 0 && token.startsWith("-") && !["-", "--"].includes(token)) {
     return parseShorts(tokens, options);
-  } else if ((token === null || token === void 0 ? void 0 : token.startsWith("<")) && token.endsWith(">") || (token === null || token === void 0 ? void 0 : token.toUpperCase()) === token && token.match(/[A-Z]/)) {
+  } else if (token !== null && token !== void 0 && token.startsWith("<") && token.endsWith(">") || (token === null || token === void 0 ? void 0 : token.toUpperCase()) === token && token.match(/[A-Z]/)) {
     return [new Argument(tokens.move())];
   } else {
     return [new Command(tokens.move())];
   }
 };
-
-var VERSION = "1.0.4";
-exports.VERSION = VERSION;
-var defaultParams = Object.freeze({
-  help: true,
-  optionsFirst: false
-});
 
 var docopt = function docopt(doc) {
   var init = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -1149,15 +1207,15 @@ var docopt = function docopt(doc) {
   var options = parseDefaults(doc);
   var pattern = parsePattern(formalUsage(Exit.usage || ""), options);
   var argv = parseArgv(new TokenStream(params.argv, Exit), options, params.optionsFirst);
-  var patternOptions = uniqueMap(pattern.flat(Option1));
-  pattern.flat(AnyOptions).forEach(function (ao) {
+  var patternOptions = uniqueMap(pattern.flat(Option2));
+  pattern.flat(AnyOptions2).forEach(function (ao) {
     var docOptions = parseDefaults(doc);
     ao.children = unique(docOptions.filter(function (o) {
       return !patternOptions.has(o.toString());
     }));
   });
   extras(params.help, params.version, argv.filter(function (x) {
-    return x instanceof Option1;
+    return x instanceof Option2;
   }), doc);
 
   var _pattern$fix$match = pattern.fix().match(argv),
@@ -1179,59 +1237,5 @@ var docopt = function docopt(doc) {
 
 var _default = docopt;
 exports["default"] = _default;
-
-var extras = function extras(help, version, options, doc) {
-  if (help && options.filter(function (o) {
-    return ["-h", "--help"].includes(o.name);
-  }).length > 0) {
-    Exit.usage = undefined;
-    throw new Exit(doc.trim());
-  }
-
-  if (version && options.filter(function (o) {
-    return o.name === "--version" && o.value;
-  }).length > 0) {
-    Exit.usage = undefined;
-    throw new Exit(version);
-  }
-};
-
-var printableUsage = function printableUsage(doc) {
-  var usageSplit = doc.split(/([Uu][Ss][Aa][Gg][Ee]:)/);
-
-  if (usageSplit.length < 3) {
-    throw new DocoptLanguageError('"usage:" (case-insensitive) not found.');
-  }
-
-  if (usageSplit.length > 3) {
-    throw new DocoptLanguageError('More than one "usage:" (case-insensitive).');
-  }
-
-  return usageSplit.slice(1).join("").split(/\n\s*\n/)[0].trim();
-};
-
-var formalUsage = function formalUsage(printableUsage1) {
-  var pu = printableUsage1.split(/\s+/g).slice(1);
-  var ret = [];
-
-  var _iterator6 = _createForOfIteratorHelper(pu.slice(1)),
-      _step6;
-
-  try {
-    for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-      var s = _step6.value;
-
-      if (s === pu[0]) {
-        ret.push(") | (");
-      } else {
-        ret.push(s);
-      }
-    }
-  } catch (err) {
-    _iterator6.e(err);
-  } finally {
-    _iterator6.f();
-  }
-
-  return "( ".concat(ret.join(" "), " )");
-};
+var AnyOptions2 = AnyOptions1;
+var Option2 = Option1;
