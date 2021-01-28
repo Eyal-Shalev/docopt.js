@@ -278,7 +278,7 @@ class Option1 extends ChildPattern {
         let value2 = false;
         let [options, , description] = stringPartition(optionDescription.trim(), "  ");
         options = options.replace(/,/g, " ").replace(/=/g, " ");
-        for (let s of options.split(/\s+/g)){
+        for (let s of options.trim().split(/\s+/g)){
             if (s.startsWith("--")) {
                 long1 = s;
             } else if (s.startsWith("-")) {
@@ -689,7 +689,7 @@ const parseAtom = (tokens, options)=>{
         ];
     }
 };
-export const VERSION = "1.0.4";
+export const VERSION = "1.0.5";
 const defaultParams = Object.freeze({
     help: true,
     optionsFirst: false
@@ -743,10 +743,10 @@ const extras = (help, version, options, doc)=>{
 const printableUsage = (doc)=>{
     const usageSplit = doc.split(/([Uu][Ss][Aa][Gg][Ee]:)/);
     if (usageSplit.length < 3) {
-        throw new DocoptLanguageError('"usage:" (case-insensitive) not found.');
+        throw new DocoptLanguageError('\"usage:\" (case-insensitive) not found.');
     }
     if (usageSplit.length > 3) {
-        throw new DocoptLanguageError('More than one "usage:" (case-insensitive).');
+        throw new DocoptLanguageError('More than one \"usage:\" (case-insensitive).');
     }
     return usageSplit.slice(1).join("").split(/\n\s*\n/)[0].trim();
 };

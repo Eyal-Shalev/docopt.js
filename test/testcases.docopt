@@ -907,3 +907,18 @@ $ prog -pHOME
 r"""Usage: foo (--xx=x|--yy=y)..."""
 $ prog --xx=1 --yy=2
 {"--xx": ["1"], "--yy": ["2"]}
+
+#
+# Multi-line option descriptions
+#
+
+r"""usage: foo [options]
+
+-b  Multi-line
+    description.
+-c
+  Multi-line
+  description.
+"""
+$ prog -b
+{"-b": true, "-c": false}

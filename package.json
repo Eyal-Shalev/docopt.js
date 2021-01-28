@@ -27,7 +27,6 @@
     "node": ">=10.3.0"
   },
   "scripts": {
-    "test": "node test/test.js",
     "deno-bundle": "deno bundle src/docopt.ts dist/docopt.mjs",
     "babel": "babel dist/docopt.mjs -o dist/docopt.cjs",
     "prepare": "npm run deno-bundle && npm run babel"
