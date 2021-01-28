@@ -208,7 +208,7 @@ export class Option extends ChildPattern {
       "  ",
     );
     options = options.replace(/,/g, " ").replace(/=/g, " ");
-    for (let s of options.split(/\s+/g)) {
+    for (let s of options.trim().split(/\s+/g)) {
       if (s.startsWith("--")) {
         long = s;
       } else if (s.startsWith("-")) {

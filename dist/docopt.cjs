@@ -498,7 +498,7 @@ var Option1 = /*#__PURE__*/function (_ChildPattern) {
 
       options = options.replace(/,/g, " ").replace(/=/g, " ");
 
-      var _iterator2 = _createForOfIteratorHelper(options.split(/\s+/g)),
+      var _iterator2 = _createForOfIteratorHelper(options.trim().split(/\s+/g)),
           _step2;
 
       try {
@@ -1132,7 +1132,7 @@ var parseAtom = function parseAtom(tokens, options) {
   }
 };
 
-var VERSION = "1.0.4";
+var VERSION = "1.0.5";
 exports.VERSION = VERSION;
 var defaultParams = Object.freeze({
   help: true,
@@ -1200,11 +1200,11 @@ var printableUsage = function printableUsage(doc) {
   var usageSplit = doc.split(/([Uu][Ss][Aa][Gg][Ee]:)/);
 
   if (usageSplit.length < 3) {
-    throw new DocoptLanguageError('"usage:" (case-insensitive) not found.');
+    throw new DocoptLanguageError('\"usage:\" (case-insensitive) not found.');
   }
 
   if (usageSplit.length > 3) {
-    throw new DocoptLanguageError('More than one "usage:" (case-insensitive).');
+    throw new DocoptLanguageError('More than one \"usage:\" (case-insensitive).');
   }
 
   return usageSplit.slice(1).join("").split(/\n\s*\n/)[0].trim();
