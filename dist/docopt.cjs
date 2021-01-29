@@ -1132,7 +1132,7 @@ var parseAtom = function parseAtom(tokens, options) {
   }
 };
 
-var VERSION = "1.0.5";
+var VERSION = "1.0.6";
 exports.VERSION = VERSION;
 var defaultParams = Object.freeze({
   help: true,
