@@ -108,7 +108,7 @@ export abstract class Pattern {
 }
 
 export abstract class ChildPattern extends Pattern {
-  public children: undefined;
+  public children: undefined = undefined;
 
   constructor(public name: string | null, public value: Value = null) {
     super();
