@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -9,8 +11,6 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -19,17 +19,17 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
@@ -37,7 +37,7 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -53,7 +53,7 @@ function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new 
 
 function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
 
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
 function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
 
@@ -92,6 +92,9 @@ var Exit = /*#__PURE__*/function (_Error2) {
     _classCallCheck(this, Exit);
 
     _this = _super2.call(this);
+
+    _defineProperty(_assertThisInitialized(_this), "_message", void 0);
+
     _this._message = _message;
     return _this;
   }
@@ -105,6 +108,8 @@ var Exit = /*#__PURE__*/function (_Error2) {
 
   return Exit;
 }( /*#__PURE__*/_wrapNativeSuper(Error));
+
+_defineProperty(Exit, "usage", void 0);
 
 var uniqueMap = function uniqueMap(arr) {
   var m = new Map();
@@ -138,61 +143,11 @@ var stringPartition = function stringPartition(source, expr) {
   return [source.substring(0, i), expr, source.substring(i + expr.length)];
 };
 
-var TokenStream = /*#__PURE__*/function (_Array) {
-  _inherits(TokenStream, _Array);
-
-  var _super3 = _createSuper(TokenStream);
-
-  function TokenStream() {
-    var _this3;
-
-    var _this2;
-
-    var source1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    var error = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Exit;
-
-    _classCallCheck(this, TokenStream);
-
-    _this2 = _super3.call(this);
-    _this2.error = error;
-
-    if (typeof source1 === "string") {
-      source1 = source1.trim().split(/\s+/g);
-    }
-
-    if (typeof source1 === "number") {
-      source1 = new Array(source1);
-    }
-
-    (_this3 = _this2).push.apply(_this3, _toConsumableArray(source1));
-
-    return _this2;
-  }
-
-  _createClass(TokenStream, [{
-    key: "move",
-    value: function move() {
-      return this.shift() || null;
-    }
-  }, {
-    key: "next",
-    value: function next() {
-      this.shift();
-      return this;
-    }
-  }, {
-    key: "current",
-    value: function current() {
-      return this.length > 0 ? this[0] : null;
-    }
-  }]);
-
-  return TokenStream;
-}( /*#__PURE__*/_wrapNativeSuper(Array));
-
 var Pattern = /*#__PURE__*/function () {
   function Pattern() {
     _classCallCheck(this, Pattern);
+
+    _defineProperty(this, "children", void 0);
   }
 
   _createClass(Pattern, [{
@@ -343,19 +298,26 @@ var Pattern = /*#__PURE__*/function () {
 var ChildPattern = /*#__PURE__*/function (_Pattern) {
   _inherits(ChildPattern, _Pattern);
 
-  var _super4 = _createSuper(ChildPattern);
+  var _super3 = _createSuper(ChildPattern);
 
-  function ChildPattern(name) {
-    var _this4;
+  function ChildPattern(name1) {
+    var _this2;
 
     var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
     _classCallCheck(this, ChildPattern);
 
-    _this4 = _super4.call(this);
-    _this4.name = name;
-    _this4.value = value;
-    return _this4;
+    _this2 = _super3.call(this);
+
+    _defineProperty(_assertThisInitialized(_this2), "name", void 0);
+
+    _defineProperty(_assertThisInitialized(_this2), "value", void 0);
+
+    _defineProperty(_assertThisInitialized(_this2), "children", undefined);
+
+    _this2.name = name1;
+    _this2.value = value;
+    return _this2;
   }
 
   _createClass(ChildPattern, [{
@@ -384,7 +346,7 @@ var ChildPattern = /*#__PURE__*/function (_Pattern) {
   }, {
     key: "match",
     value: function match(left) {
-      var _this5 = this;
+      var _this3 = this;
 
       var collected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
@@ -399,7 +361,7 @@ var ChildPattern = /*#__PURE__*/function (_Pattern) {
 
       left = [].concat(_toConsumableArray(left.slice(0, pos)), _toConsumableArray(left.slice(pos + 1)));
       var sameName = collected.filter(function (a) {
-        return a instanceof ChildPattern && a.name === _this5.name;
+        return a instanceof ChildPattern && a.name === _this3.name;
       });
 
       if (this.value instanceof Array || typeof this.value === "number") {
@@ -439,30 +401,37 @@ var ChildPattern = /*#__PURE__*/function (_Pattern) {
 var Option1 = /*#__PURE__*/function (_ChildPattern) {
   _inherits(Option1, _ChildPattern);
 
-  var _super5 = _createSuper(Option1);
+  var _super4 = _createSuper(Option1);
 
-  function Option1(_short, _long) {
-    var _this6;
+  function Option1(__short, __long) {
+    var _this4;
 
     var argCount = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
     var value1 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
     _classCallCheck(this, Option1);
 
-    _this6 = _super5.call(this, _long || _short, value1);
-    _this6["short"] = _short;
-    _this6["long"] = _long;
-    _this6.argCount = argCount;
+    _this4 = _super4.call(this, __long || __short, value1);
+
+    _defineProperty(_assertThisInitialized(_this4), "short", void 0);
+
+    _defineProperty(_assertThisInitialized(_this4), "long", void 0);
+
+    _defineProperty(_assertThisInitialized(_this4), "argCount", void 0);
+
+    _this4["short"] = __short;
+    _this4["long"] = __long;
+    _this4.argCount = argCount;
 
     if (![0, 1].includes(argCount)) {
       throw new Error("Invalid runtime state");
     }
 
     if (value1 === false && argCount > 0) {
-      _this6.value = null;
+      _this4.value = null;
     }
 
-    return _this6;
+    return _this4;
   }
 
   _createClass(Option1, [{
@@ -486,8 +455,8 @@ var Option1 = /*#__PURE__*/function (_ChildPattern) {
   }], [{
     key: "parse",
     value: function parse(optionDescription) {
-      var short1 = null;
-      var long1 = null;
+      var __short1 = null;
+      var __long1 = null;
       var argCount1 = 0;
       var value2 = false;
 
@@ -506,9 +475,9 @@ var Option1 = /*#__PURE__*/function (_ChildPattern) {
           var s = _step2.value;
 
           if (s.startsWith("--")) {
-            long1 = s;
+            __long1 = s;
           } else if (s.startsWith("-")) {
-            short1 = s;
+            __short1 = s;
           } else {
             argCount1 = 1;
           }
@@ -527,7 +496,7 @@ var Option1 = /*#__PURE__*/function (_ChildPattern) {
         }
       }
 
-      return new Option1(short1, long1, argCount1, value2);
+      return new Option1(__short1, __long1, argCount1, value2);
     }
   }]);
 
@@ -537,12 +506,12 @@ var Option1 = /*#__PURE__*/function (_ChildPattern) {
 var Argument = /*#__PURE__*/function (_ChildPattern2) {
   _inherits(Argument, _ChildPattern2);
 
-  var _super6 = _createSuper(Argument);
+  var _super5 = _createSuper(Argument);
 
   function Argument() {
     _classCallCheck(this, Argument);
 
-    return _super6.apply(this, arguments);
+    return _super5.apply(this, arguments);
   }
 
   _createClass(Argument, [{
@@ -575,18 +544,21 @@ var Argument = /*#__PURE__*/function (_ChildPattern2) {
 var Command = /*#__PURE__*/function (_Argument) {
   _inherits(Command, _Argument);
 
-  var _super7 = _createSuper(Command);
+  var _super6 = _createSuper(Command);
 
-  function Command(name1) {
-    var _this7;
+  function Command(name2) {
+    var _this5;
 
     var value2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
     _classCallCheck(this, Command);
 
-    _this7 = _super7.call(this, name1, value2);
-    _this7.name = name1;
-    return _this7;
+    _this5 = _super6.call(this, name2, value2);
+
+    _defineProperty(_assertThisInitialized(_this5), "name", void 0);
+
+    _this5.name = name2;
+    return _this5;
   }
 
   _createClass(Command, [{
@@ -614,23 +586,23 @@ var Command = /*#__PURE__*/function (_Argument) {
 var ParentPattern = /*#__PURE__*/function (_Pattern2) {
   _inherits(ParentPattern, _Pattern2);
 
-  var _super8 = _createSuper(ParentPattern);
+  var _super7 = _createSuper(ParentPattern);
 
   function ParentPattern() {
-    var _this8;
+    var _this6;
 
     _classCallCheck(this, ParentPattern);
 
-    _this8 = _super8.call(this);
+    _this6 = _super7.call(this);
 
-    _defineProperty(_assertThisInitialized(_this8), "children", []);
+    _defineProperty(_assertThisInitialized(_this6), "children", []);
 
     for (var _len2 = arguments.length, children = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       children[_key2] = arguments[_key2];
     }
 
-    _this8.children = children;
-    return _this8;
+    _this6.children = children;
+    return _this6;
   }
 
   _createClass(ParentPattern, [{
@@ -663,12 +635,12 @@ var ParentPattern = /*#__PURE__*/function (_Pattern2) {
 var Required = /*#__PURE__*/function (_ParentPattern) {
   _inherits(Required, _ParentPattern);
 
-  var _super9 = _createSuper(Required);
+  var _super8 = _createSuper(Required);
 
   function Required() {
     _classCallCheck(this, Required);
 
-    return _super9.apply(this, arguments);
+    return _super8.apply(this, arguments);
   }
 
   _createClass(Required, [{
@@ -714,12 +686,12 @@ var Required = /*#__PURE__*/function (_ParentPattern) {
 var Optional = /*#__PURE__*/function (_ParentPattern2) {
   _inherits(Optional, _ParentPattern2);
 
-  var _super10 = _createSuper(Optional);
+  var _super9 = _createSuper(Optional);
 
   function Optional() {
     _classCallCheck(this, Optional);
 
-    return _super10.apply(this, arguments);
+    return _super9.apply(this, arguments);
   }
 
   _createClass(Optional, [{
@@ -757,12 +729,12 @@ var Optional = /*#__PURE__*/function (_ParentPattern2) {
 var AnyOptions = /*#__PURE__*/function (_Optional) {
   _inherits(AnyOptions, _Optional);
 
-  var _super11 = _createSuper(AnyOptions);
+  var _super10 = _createSuper(AnyOptions);
 
   function AnyOptions() {
     _classCallCheck(this, AnyOptions);
 
-    return _super11.apply(this, arguments);
+    return _super10.apply(this, arguments);
   }
 
   return AnyOptions;
@@ -771,12 +743,12 @@ var AnyOptions = /*#__PURE__*/function (_Optional) {
 var OneOrMore = /*#__PURE__*/function (_ParentPattern3) {
   _inherits(OneOrMore, _ParentPattern3);
 
-  var _super12 = _createSuper(OneOrMore);
+  var _super11 = _createSuper(OneOrMore);
 
   function OneOrMore() {
     _classCallCheck(this, OneOrMore);
 
-    return _super12.apply(this, arguments);
+    return _super11.apply(this, arguments);
   }
 
   _createClass(OneOrMore, [{
@@ -825,12 +797,12 @@ var OneOrMore = /*#__PURE__*/function (_ParentPattern3) {
 var Either = /*#__PURE__*/function (_ParentPattern4) {
   _inherits(Either, _ParentPattern4);
 
-  var _super13 = _createSuper(Either);
+  var _super12 = _createSuper(Either);
 
   function Either() {
     _classCallCheck(this, Either);
 
-    return _super13.apply(this, arguments);
+    return _super12.apply(this, arguments);
   }
 
   _createClass(Either, [{
@@ -874,6 +846,61 @@ var Either = /*#__PURE__*/function (_ParentPattern4) {
   return Either;
 }(ParentPattern);
 
+var TokenStream = /*#__PURE__*/function (_Array) {
+  _inherits(TokenStream, _Array);
+
+  var _super13 = _createSuper(TokenStream);
+
+  function TokenStream() {
+    var _this8;
+
+    var _this7;
+
+    var source = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var error = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Exit;
+
+    _classCallCheck(this, TokenStream);
+
+    _this7 = _super13.call(this);
+
+    _defineProperty(_assertThisInitialized(_this7), "error", void 0);
+
+    _this7.error = error;
+
+    if (typeof source === "string") {
+      source = source.trim().split(/\s+/g);
+    }
+
+    if (typeof source === "number") {
+      source = new Array(source);
+    }
+
+    (_this8 = _this7).push.apply(_this8, _toConsumableArray(source));
+
+    return _this7;
+  }
+
+  _createClass(TokenStream, [{
+    key: "move",
+    value: function move() {
+      return this.shift() || null;
+    }
+  }, {
+    key: "next",
+    value: function next() {
+      this.shift();
+      return this;
+    }
+  }, {
+    key: "current",
+    value: function current() {
+      return this.length > 0 ? this[0] : null;
+    }
+  }]);
+
+  return TokenStream;
+}( /*#__PURE__*/_wrapNativeSuper(Array));
+
 var parseArgv = function parseArgv(tokens, options) {
   var optionsFirst = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   var parsed = [];
@@ -885,9 +912,9 @@ var parseArgv = function parseArgv(tokens, options) {
       return parsed.concat(tokens.next().map(function (v) {
         return new Argument(null, v);
       }));
-    } else if ((_tokens$current = tokens.current()) === null || _tokens$current === void 0 ? void 0 : _tokens$current.startsWith("--")) {
+    } else if ((_tokens$current = tokens.current()) !== null && _tokens$current !== void 0 && _tokens$current.startsWith("--")) {
       parsed.push.apply(parsed, _toConsumableArray(parseLong(tokens, options)));
-    } else if (((_tokens$current2 = tokens.current()) === null || _tokens$current2 === void 0 ? void 0 : _tokens$current2.startsWith("-")) && tokens.current() !== "-") {
+    } else if ((_tokens$current2 = tokens.current()) !== null && _tokens$current2 !== void 0 && _tokens$current2.startsWith("-") && tokens.current() !== "-") {
       parsed.push.apply(parsed, _toConsumableArray(parseShorts(tokens, options)));
     } else if (optionsFirst) {
       return parsed.concat(tokens.map(function (v) {
@@ -920,28 +947,28 @@ var parseDefaults = function parseDefaults(doc) {
 };
 
 var parseLong = function parseLong(tokens, options) {
-  var long1, eq, value3;
+  var __long1, eq, value3;
 
   var _stringPartition3 = stringPartition((tokens === null || tokens === void 0 ? void 0 : tokens.move()) || "", "=");
 
   var _stringPartition4 = _slicedToArray(_stringPartition3, 3);
 
-  long1 = _stringPartition4[0];
+  __long1 = _stringPartition4[0];
   eq = _stringPartition4[1];
   value3 = _stringPartition4[2];
 
-  if (!long1.startsWith("--")) {
+  if (!__long1.startsWith("--")) {
     throw new Error("Invalid runtime state");
   }
 
   value3 = eq === value3 && eq === "" ? null : value3;
   var similar = options.filter(function (o) {
-    return o["long"] && o["long"] === long1;
+    return o["long"] && o["long"] === __long1;
   });
 
   if (tokens.error === Exit && similar.length === 0) {
     similar = options.filter(function (o) {
-      return o["long"] && o["long"].startsWith(long1);
+      return o["long"] && o["long"].startsWith(__long1);
     });
   }
 
@@ -951,14 +978,14 @@ var parseLong = function parseLong(tokens, options) {
     var ostr = similar.map(function (o1) {
       return o1["long"];
     }).join(", ");
-    throw new tokens.error("".concat(long1, " is not a unique prefix: ").concat(ostr));
+    throw new tokens.error("".concat(__long1, " is not a unique prefix: ").concat(ostr));
   } else if (similar.length === 0) {
     var argCount1 = eq === "=" ? 1 : 0;
-    o = new Option1(null, long1, argCount1);
+    o = new Option1(null, __long1, argCount1);
     options.push(o);
 
     if (tokens.error === Exit) {
-      o = new Option1(null, long1, argCount1, argCount1 === 1 ? value3 : true);
+      o = new Option1(null, __long1, argCount1, argCount1 === 1 ? value3 : true);
     }
   } else {
     var s0 = similar[0];
@@ -998,32 +1025,34 @@ var parseShorts = function parseShorts(tokens, options) {
 
   var _loop = function _loop() {
     var o = void 0;
-    var short1 = void 0;
+
+    var __short1 = void 0;
+
     var _ref3 = ["-" + left[0], left.substring(1)];
-    short1 = _ref3[0];
+    __short1 = _ref3[0];
     left = _ref3[1];
     var similar = options.filter(function (o1) {
-      return o1["short"] === short1;
+      return o1["short"] === __short1;
     });
 
     if (similar.length > 1) {
-      throw new tokens.error("".concat(short1, " is specified ambiguously ").concat(similar.length, " times"));
+      throw new tokens.error("".concat(__short1, " is specified ambiguously ").concat(similar.length, " times"));
     } else if (similar.length === 0) {
-      o = new Option1(short1, null, 0);
+      o = new Option1(__short1, null, 0);
       options.push(o);
 
       if (tokens.error === Exit) {
-        o = new Option1(short1, null, 0, true);
+        o = new Option1(__short1, null, 0, true);
       }
     } else {
       var s0 = similar[0];
-      o = new Option1(short1, s0["long"], s0.argCount, s0.value);
+      o = new Option1(__short1, s0["long"], s0.argCount, s0.value);
       var value3 = null;
 
       if (o.argCount !== 0) {
         if (left === "") {
           if (tokens.current() === null) {
-            throw new tokens.error("".concat(short1, " requires argument"));
+            throw new tokens.error("".concat(__short1, " requires argument"));
           }
 
           value3 = tokens.move();
@@ -1048,8 +1077,8 @@ var parseShorts = function parseShorts(tokens, options) {
   return parsed;
 };
 
-var parsePattern = function parsePattern(source2, options) {
-  var tokens = new TokenStream(source2.replace(/([\[\]\(\)\|]|\.\.\.)/g, " $1 "), DocoptLanguageError);
+var parsePattern = function parsePattern(source1, options) {
+  var tokens = new TokenStream(source1.replace(/([\[\]\(\)\|]|\.\.\.)/g, " $1 "), DocoptLanguageError);
   var result = parseExpr(tokens, options);
 
   if (tokens.current() != null) {
@@ -1121,19 +1150,19 @@ var parseAtom = function parseAtom(tokens, options) {
   } else if (token === "options") {
     tokens.move();
     return [new AnyOptions()];
-  } else if ((token === null || token === void 0 ? void 0 : token.startsWith("--")) && token !== "--") {
+  } else if (token !== null && token !== void 0 && token.startsWith("--") && token !== "--") {
     return parseLong(tokens, options);
-  } else if ((token === null || token === void 0 ? void 0 : token.startsWith("-")) && !["-", "--"].includes(token)) {
+  } else if (token !== null && token !== void 0 && token.startsWith("-") && !["-", "--"].includes(token)) {
     return parseShorts(tokens, options);
-  } else if ((token === null || token === void 0 ? void 0 : token.startsWith("<")) && token.endsWith(">") || (token === null || token === void 0 ? void 0 : token.toUpperCase()) === token && token.match(/[A-Z]/)) {
+  } else if (token !== null && token !== void 0 && token.startsWith("<") && token.endsWith(">") || (token === null || token === void 0 ? void 0 : token.toUpperCase()) === token && token.match(/[A-Z]/)) {
     return [new Argument(tokens.move())];
   } else {
     return [new Command(tokens.move())];
   }
 };
 
-var VERSION = "1.0.6";
-exports.VERSION = VERSION;
+var VERSION1 = "1.0.7";
+exports.VERSION = VERSION1;
 var defaultParams = Object.freeze({
   help: true,
   optionsFirst: false
@@ -1177,8 +1206,7 @@ var docopt = function docopt(doc) {
   throw new Exit();
 };
 
-var _default = docopt;
-exports["default"] = _default;
+exports["default"] = docopt;
 
 var extras = function extras(help, version, options, doc) {
   if (help && options.filter(function (o) {
@@ -1200,11 +1228,11 @@ var printableUsage = function printableUsage(doc) {
   var usageSplit = doc.split(/([Uu][Ss][Aa][Gg][Ee]:)/);
 
   if (usageSplit.length < 3) {
-    throw new DocoptLanguageError('\"usage:\" (case-insensitive) not found.');
+    throw new DocoptLanguageError('"usage:" (case-insensitive) not found.');
   }
 
   if (usageSplit.length > 3) {
-    throw new DocoptLanguageError('More than one \"usage:\" (case-insensitive).');
+    throw new DocoptLanguageError('More than one "usage:" (case-insensitive).');
   }
 
   return usageSplit.slice(1).join("").split(/\n\s*\n/)[0].trim();

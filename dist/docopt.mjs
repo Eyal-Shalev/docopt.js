@@ -3,6 +3,7 @@ const processArgv = ()=>typeof Deno !== "undefined" && Deno.args || typeof proce
 class DocoptLanguageError extends Error {
 }
 class Exit extends Error {
+    _message;
     constructor(_message = ""){
         super();
         this._message = _message;
@@ -10,6 +11,7 @@ class Exit extends Error {
     get message() {
         return `${this._message}\n${Exit.usage || ""}`.trim();
     }
+    static usage;
 }
 const uniqueMap = (arr)=>{
     const m = new Map();
@@ -42,30 +44,8 @@ const stringPartition = (source, expr)=>{
         source.substring(i + expr.length)
     ];
 };
-class TokenStream extends Array {
-    constructor(source1 = [], error = Exit){
-        super();
-        this.error = error;
-        if (typeof source1 === "string") {
-            source1 = source1.trim().split(/\s+/g);
-        }
-        if (typeof source1 === "number") {
-            source1 = new Array(source1);
-        }
-        this.push(...source1);
-    }
-    move() {
-        return this.shift() || null;
-    }
-    next() {
-        this.shift();
-        return this;
-    }
-    current() {
-        return this.length > 0 ? this[0] : null;
-    }
-}
 class Pattern {
+    children;
     toString() {
         return `${this.constructor.name}()`;
     }
@@ -175,9 +155,12 @@ class Pattern {
     }
 }
 class ChildPattern extends Pattern {
-    constructor(name, value = null){
+    name;
+    value;
+    children = undefined;
+    constructor(name1, value = null){
         super();
-        this.name = name;
+        this.name = name1;
         this.value = value;
     }
     equalTo(other) {
@@ -253,10 +236,13 @@ class ChildPattern extends Pattern {
     }
 }
 class Option1 extends ChildPattern {
-    constructor(short, long, argCount = 0, value1 = false){
-        super(long || short, value1);
-        this.short = short;
-        this.long = long;
+    short;
+    long;
+    argCount;
+    constructor(__short, __long, argCount = 0, value1 = false){
+        super(__long || __short, value1);
+        this.short = __short;
+        this.long = __long;
         this.argCount = argCount;
         if (![
             0,
@@ -272,17 +258,17 @@ class Option1 extends ChildPattern {
         return `Option(${this.short || ""}, ${this.long || ""}, ${this.argCount}, ${this.value !== null ? this.value : ""})`;
     }
     static parse(optionDescription) {
-        let short1 = null;
-        let long1 = null;
+        let __short1 = null;
+        let __long1 = null;
         let argCount1 = 0;
         let value2 = false;
         let [options, , description] = stringPartition(optionDescription.trim(), "  ");
         options = options.replace(/,/g, " ").replace(/=/g, " ");
         for (let s of options.trim().split(/\s+/g)){
             if (s.startsWith("--")) {
-                long1 = s;
+                __long1 = s;
             } else if (s.startsWith("-")) {
-                short1 = s;
+                __short1 = s;
             } else {
                 argCount1 = 1;
             }
@@ -293,7 +279,7 @@ class Option1 extends ChildPattern {
                 value2 = matched[1];
             }
         }
-        return new Option1(short1, long1, argCount1, value2);
+        return new Option1(__short1, __long1, argCount1, value2);
     }
     singleMatch(left) {
         for(let i = 0; i < left.length; i++){
@@ -334,9 +320,10 @@ class Argument extends ChildPattern {
     }
 }
 class Command extends Argument {
-    constructor(name1, value2 = false){
-        super(name1, value2);
-        this.name = name1;
+    name;
+    constructor(name2, value2 = false){
+        super(name2, value2);
+        this.name = name2;
     }
     singleMatch(left) {
         for(let i = 0; i < left.length; i++){
@@ -473,6 +460,30 @@ class Either extends ParentPattern {
         ];
     }
 }
+class TokenStream extends Array {
+    error;
+    constructor(source = [], error = Exit){
+        super();
+        this.error = error;
+        if (typeof source === "string") {
+            source = source.trim().split(/\s+/g);
+        }
+        if (typeof source === "number") {
+            source = new Array(source);
+        }
+        this.push(...source);
+    }
+    move() {
+        return this.shift() || null;
+    }
+    next() {
+        this.shift();
+        return this;
+    }
+    current() {
+        return this.length > 0 ? this[0] : null;
+    }
+}
 const parseArgv = (tokens, options, optionsFirst = false)=>{
     const parsed = [];
     while(tokens.current() !== null){
@@ -502,29 +513,29 @@ const parseDefaults = (doc)=>{
     );
 };
 const parseLong = (tokens, options)=>{
-    let long1, eq, value3;
-    [long1, eq, value3] = stringPartition(tokens?.move() || "", "=");
-    if (!long1.startsWith("--")) {
+    let __long1, eq, value3;
+    [__long1, eq, value3] = stringPartition(tokens?.move() || "", "=");
+    if (!__long1.startsWith("--")) {
         throw new Error("Invalid runtime state");
     }
     value3 = eq === value3 && eq === "" ? null : value3;
-    let similar = options.filter((o)=>o.long && o.long === long1
+    let similar = options.filter((o)=>o.long && o.long === __long1
     );
     if (tokens.error === Exit && similar.length === 0) {
-        similar = options.filter((o)=>o.long && o.long.startsWith(long1)
+        similar = options.filter((o)=>o.long && o.long.startsWith(__long1)
         );
     }
     let o;
     if (similar.length > 1) {
         const ostr = similar.map((o1)=>o1.long
         ).join(", ");
-        throw new tokens.error(`${long1} is not a unique prefix: ${ostr}`);
+        throw new tokens.error(`${__long1} is not a unique prefix: ${ostr}`);
     } else if (similar.length === 0) {
         const argCount1 = eq === "=" ? 1 : 0;
-        o = new Option1(null, long1, argCount1);
+        o = new Option1(null, __long1, argCount1);
         options.push(o);
         if (tokens.error === Exit) {
-            o = new Option1(null, long1, argCount1, argCount1 === 1 ? value3 : true);
+            o = new Option1(null, __long1, argCount1, argCount1 === 1 ? value3 : true);
         }
     } else {
         const s0 = similar[0];
@@ -558,29 +569,29 @@ const parseShorts = (tokens, options)=>{
     const parsed = [];
     while(left && left !== ""){
         let o;
-        let short1;
-        [short1, left] = [
+        let __short1;
+        [__short1, left] = [
             "-" + left[0],
             left.substring(1)
         ];
-        const similar = options.filter((o1)=>o1.short === short1
+        const similar = options.filter((o1)=>o1.short === __short1
         );
         if (similar.length > 1) {
-            throw new tokens.error(`${short1} is specified ambiguously ${similar.length} times`);
+            throw new tokens.error(`${__short1} is specified ambiguously ${similar.length} times`);
         } else if (similar.length === 0) {
-            o = new Option1(short1, null, 0);
+            o = new Option1(__short1, null, 0);
             options.push(o);
             if (tokens.error === Exit) {
-                o = new Option1(short1, null, 0, true);
+                o = new Option1(__short1, null, 0, true);
             }
         } else {
             const s0 = similar[0];
-            o = new Option1(short1, s0.long, s0.argCount, s0.value);
+            o = new Option1(__short1, s0.long, s0.argCount, s0.value);
             let value3 = null;
             if (o.argCount !== 0) {
                 if (left === "") {
                     if (tokens.current() === null) {
-                        throw new tokens.error(`${short1} requires argument`);
+                        throw new tokens.error(`${__short1} requires argument`);
                     }
                     value3 = tokens.move();
                 } else {
@@ -596,8 +607,8 @@ const parseShorts = (tokens, options)=>{
     }
     return parsed;
 };
-const parsePattern = (source2, options)=>{
-    const tokens = new TokenStream(source2.replace(/([\[\]\(\)\|]|\.\.\.)/g, " $1 "), DocoptLanguageError);
+const parsePattern = (source1, options)=>{
+    const tokens = new TokenStream(source1.replace(/([\[\]\(\)\|]|\.\.\.)/g, " $1 "), DocoptLanguageError);
     const result = parseExpr(tokens, options);
     if (tokens.current() != null) {
         throw new tokens.error(`unexpected ending: ${tokens.join(" ")}`);
@@ -689,7 +700,7 @@ const parseAtom = (tokens, options)=>{
         ];
     }
 };
-export const VERSION = "1.0.6";
+const VERSION1 = "1.0.7";
 const defaultParams = Object.freeze({
     help: true,
     optionsFirst: false
@@ -724,7 +735,6 @@ const docopt = (doc, init = {
     }
     throw new Exit();
 };
-export default docopt;
 const extras = (help, version, options, doc)=>{
     if (help && options.filter((o)=>[
             "-h",
@@ -743,10 +753,10 @@ const extras = (help, version, options, doc)=>{
 const printableUsage = (doc)=>{
     const usageSplit = doc.split(/([Uu][Ss][Aa][Gg][Ee]:)/);
     if (usageSplit.length < 3) {
-        throw new DocoptLanguageError('\"usage:\" (case-insensitive) not found.');
+        throw new DocoptLanguageError('"usage:" (case-insensitive) not found.');
     }
     if (usageSplit.length > 3) {
-        throw new DocoptLanguageError('More than one \"usage:\" (case-insensitive).');
+        throw new DocoptLanguageError('More than one "usage:" (case-insensitive).');
     }
     return usageSplit.slice(1).join("").split(/\n\s*\n/)[0].trim();
 };
@@ -762,3 +772,5 @@ const formalUsage = (printableUsage1)=>{
     }
     return `( ${ret.join(" ")} )`;
 };
+export { VERSION1 as VERSION };
+export { docopt as default };

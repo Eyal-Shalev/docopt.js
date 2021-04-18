@@ -2,8 +2,6 @@ import { Constructor } from "./utils.ts";
 import { Exit } from "./error.ts";
 
 export class TokenStream extends Array<string> {
-  constructor(arrayLength?: number);
-  constructor(source?: string | string[], error?: Constructor<Error>);
   constructor(
     source: number | string | string[] = [],
     public readonly error: Constructor<Error> = Exit,

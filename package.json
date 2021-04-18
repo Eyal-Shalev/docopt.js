@@ -12,7 +12,6 @@
     "dist/**/*",
     "examples/**/*"
   ],
-  "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.12.1",
     "@babel/core": "^7.12.3",
